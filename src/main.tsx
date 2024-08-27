@@ -4,11 +4,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { WagmiProvider } from "wagmi";
 
-import App from "./App.tsx";
+import App from "./app.tsx";
 import { config } from "./wagmi.ts";
 
 import "./styles/index.css";
 import { ThemeProvider } from "./themes/context/index.tsx";
+import { Toaster } from "react-hot-toast";
 
 globalThis.Buffer = Buffer;
 
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <App />
+          <Toaster />
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
