@@ -1,27 +1,22 @@
-import { useConnect } from "wagmi";
-import { WalletIcon as Web3IconsWalletIcon } from "@web3icons/react";
-import { CubeIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { Connector, useConnect } from "wagmi";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { toast } from "react-hot-toast";
+import WalletIcon from "./icons/wallet";
 
-const Wallet = ({ connector }: { connector: any }) => {
+const Icon = ({ connector }: { connector: Connector }) => {
   const icon = connector.icon;
-  const defaultIcon = <CubeIcon className="w-6 h-6" />;
 
   if (icon) {
     return <img src={icon} alt={connector.name} width={24} height={24} />;
   }
 
-  if (connector.id === "injected") {
-    return defaultIcon;
-  }
-
-  return <Web3IconsWalletIcon name={connector.name} />;
+  return <WalletIcon iconName={connector.id} />;
 };
 
-const ConnectWalletWidget = () => {
+const Widget = () => {
   const { connectors, connectAsync } = useConnect();
 
-  const handleConnect = async (connector: any) => {
+  const handleConnect = async (connector: Connector) => {
     try {
       await connectAsync({ connector });
       toast.success("Wallet connected successfully!");
@@ -32,9 +27,9 @@ const ConnectWalletWidget = () => {
   };
 
   return (
-    <div className="bg-surface-light dark:bg-surface-dark rounded-2xl p-6 w-96 shadow-lg">
+    <div className="widget">
       <h2 className="text-2xl font-bold mb-6 text-center">
-        Log in to milkshake.ai
+        Sign in with milkshake.ai
       </h2>
 
       <div className="mb-4">
@@ -48,18 +43,17 @@ const ConnectWalletWidget = () => {
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 gap-2">
         {connectors.map((connector) => (
           <button
             key={connector.uid}
             onClick={() => handleConnect(connector)}
-            className="w-full flex items-center justify-between bg-surface-light dark:bg-surface-dark hover:bg-background-light dark:hover:bg-background-dark rounded-lg p-3 border border-secondary-light dark:border-secondary-dark transition-colors"
+            className="btn-primary text-md py-4 hover-input"
           >
             <div className="flex items-center gap-2">
-              <Wallet connector={connector} />
+              <Icon connector={connector} />
               <span className="font-medium">{connector.name}</span>
             </div>
-            <span className="text-sm text-primary-light dark:text-primary-dark"></span>
           </button>
         ))}
       </div>
@@ -78,4 +72,4 @@ const ConnectWalletWidget = () => {
   );
 };
 
-export default ConnectWalletWidget;
+export default Widget;
