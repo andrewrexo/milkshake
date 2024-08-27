@@ -39,10 +39,11 @@ const Widget = () => {
   const PageComponent = pages[displayedPage];
 
   return (
-    <div className="widget relative overflow-hidden min-h-[300px]">
-      <div data-status={transitionStatus}>
+    <div className="widget relative overflow-hidden min-h-[500px] pb-8">
+      <div data-status={transitionStatus} className="h-full">
         <PageComponent />
       </div>
+      <p className="mt-auto text-center text-xs text-primary">milkshake.ai</p>
     </div>
   );
 };
