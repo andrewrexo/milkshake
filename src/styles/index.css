@@ -25,6 +25,10 @@
   body, main {
     @apply bg-background text-text transition-colors;
   }
+
+  a {
+    @apply text-primary;
+  }
 }
 
 @layer components {
