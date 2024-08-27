@@ -24,7 +24,7 @@ const ConnectContent = () => {
   };
 
   return (
-    <div>
+    <>
       <div className="mb-4">
         <div className="relative">
           <input
@@ -49,18 +49,10 @@ const ConnectContent = () => {
           </button>
         ))}
       </div>
-
-      <p className="mt-6 text-center text-sm text-secondary-light dark:text-secondary-dark">
-        Can't find your wallet?{" "}
-        <a href="#" className="text-primary-light dark:text-primary-dark">
-          Reach out.
-        </a>
+      <p className="mt-4 text-xs text-muted text-right">
+        {connectors.length} wallets found
       </p>
-
-      <p className="mt-4 text-center text-xs text-secondary-light dark:text-secondary-dark">
-        milkshake.ai
-      </p>
-    </div>
+    </>
   );
 };
 
