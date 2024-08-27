@@ -5,11 +5,13 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { themes, type ThemeName } from "..";
+import { themes, type ThemeName, type ThemeMode } from "..";
 
 interface ThemeContextType {
   theme: ThemeName;
+  mode: ThemeMode;
   setTheme: (theme: ThemeName) => void;
+  setMode: (mode: ThemeMode) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -17,17 +19,18 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [theme, setTheme] = useState<ThemeName>("light");
+  const [theme, setTheme] = useState<ThemeName>("sunset");
+  const [mode, setMode] = useState<ThemeMode>("light");
 
   useEffect(() => {
     const root = document.documentElement;
-    Object.entries(themes[theme]).forEach(([key, value]) => {
+    Object.entries(themes[theme][mode]).forEach(([key, value]) => {
       root.style.setProperty(`--color-${key}`, value);
     });
-  }, [theme]);
+  }, [theme, mode]);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, mode, setTheme, setMode }}>
       {children}
     </ThemeContext.Provider>
   );
