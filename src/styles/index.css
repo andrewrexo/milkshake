@@ -10,37 +10,52 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --color-primary: #3B82F6;
-  --color-secondary: #6B7280;
-  --color-background: #F3F4F6;
-  --color-text: #1F2937;
+  --color-primary: 59 130 246;
+  --color-secondary: 107 114 128;
+  --color-background: 243 244 246;
+  --color-text: 31 41 55;
+  --color-surface: 255 255 255;
+  --color-muted: 156 163 175;
+  --color-border: 229 231 235;
+  --color-input: 235 237 240;
+  --color-hover: 243 244 246;
 }
 
 @layer base {
-  body {
-    @apply bg-background text-text;
-    transition: background-color 0.3s, color 0.3s;
+  body, main {
+    @apply bg-background text-text transition-colors;
   }
 }
 
 @layer components {
+  .btn-primary,
+  .btn-secondary,
+  .input,
+  .modal,
+  .modal-content,
+  .widget {
+    @apply transition-colors;
+  }
+
+  .hover-input {
+    @apply rounded-lg hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-300 ease-in-out;
+    @apply hover:bg-hover;
+  }
+
   .btn-primary {
-    @apply bg-primary text-white hover:bg-primary-light rounded px-4 py-2 transition-colors;
+    @apply bg-surface text-text hover:bg-input px-4 py-2 border border-border rounded-lg;
   }
 
   .btn-secondary {
-    @apply bg-secondary text-white hover:bg-secondary-light rounded px-4 py-2 transition-colors;
+    @apply bg-secondary text-white hover:bg-secondary rounded px-4 py-2;
   }
 
   .input {
-    @apply w-full py-3 px-4 bg-background rounded-lg text-text border border-secondary focus:outline-none focus:ring-2 focus:ring-primary;
+    @apply w-full py-3 px-4 bg-input rounded-lg text-text border border-border focus:outline-none focus:ring-2 focus:ring-primary;
+    @apply placeholder:text-muted;
   }
-
-  .modal {
-    @apply fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50;
-  }
-
-  .modal-content {
+  
+  .widget {
     @apply bg-surface rounded-2xl p-6 w-96 shadow-lg;
   }
 }
