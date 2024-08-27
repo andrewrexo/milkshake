@@ -10,11 +10,11 @@ import SafeSVG from "@web3icons/core/svgs/wallets/branded/safe.svg?react";
 
 import { CubeIcon } from "@radix-ui/react-icons";
 
-interface WalletIconProps {
+interface WalletIconProps extends React.SVGProps<SVGSVGElement> {
   iconName: string;
 }
 
-const walletIcons: Record<string, React.FC> = {
+const walletIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   metamask: MetamaskSVG,
   coinbase: CoinbaseSVG,
   coinbaseWalletSDK: CoinbaseSVG,
@@ -23,7 +23,7 @@ const walletIcons: Record<string, React.FC> = {
   safe: SafeSVG,
 };
 
-const WalletIcon: React.FC<WalletIconProps> = ({ iconName }) => {
+const WalletIcon: React.FC<WalletIconProps> = ({ iconName, ...props }) => {
   const IconComponent = walletIcons[iconName as keyof typeof walletIcons];
 
   if (!IconComponent) {
