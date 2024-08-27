@@ -19,7 +19,8 @@
     "react-hot-toast": "^2.4.1",
     "viem": "latest",
     "vite-plugin-svgr": "^4.2.0",
-    "wagmi": "latest"
+    "wagmi": "latest",
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.0",

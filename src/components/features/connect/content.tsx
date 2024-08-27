@@ -1,19 +1,23 @@
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { type Connector, useConnect } from "wagmi";
 import Icon from "./icon";
+import { useAppStore } from "../../../store/useAppStore";
 
 const ConnectContent = () => {
   const { connectors, connect } = useConnect();
+  const setConnected = useAppStore((state) => state.setConnected);
+  const setCurrentPage = useAppStore((state) => state.setCurrentPage);
 
   const handleConnect = (connector: Connector) => {
     connect(
       { connector },
       {
         onSuccess: () => {
-          // todo
+          setConnected(true);
+          setCurrentPage("dashboard");
         },
         onError: () => {
-          // todo
+          // Handle error
         },
       }
     );

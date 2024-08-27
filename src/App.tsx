@@ -1,8 +1,11 @@
 import Widget from "./components/widget";
 import ThemeSelect from "./components/ui/theme-select";
 import ModeToggle from "./components/ui/mode-toggle";
+import { useAppStore } from "./store/useAppStore";
 
 function App() {
+  const isConnected = useAppStore((state) => state.isConnected);
+
   return (
     <main className="min-h-screen h-screen w-full flex flex-col bg-background gap-2">
       <div className="flex flex-col items-center h-full p-8">
@@ -10,10 +13,12 @@ function App() {
           All demo, no bullshit
         </h1>
         <Widget />
-        <div className="flex mt-12 items-center justify-center space-x-4">
-          <ThemeSelect />
-          <ModeToggle />
-        </div>
+        {!isConnected && (
+          <div className="flex mt-12 items-center justify-center space-x-4">
+            <ThemeSelect />
+            <ModeToggle />
+          </div>
+        )}
       </div>
     </main>
   );

@@ -61,5 +61,22 @@
   
   .widget {
     @apply bg-surface rounded-2xl p-6 w-96 shadow-lg;
+    transition: opacity 300ms ease-in-out;
   }
+}
+
+.widget > div {
+  @apply transition-transform duration-300 ease-in-out;
+}
+
+.widget > div[data-status="entering"] {
+  transform: translateX(-100%);
+}
+
+.widget > div[data-status="exiting"] {
+  transform: translateX(-100%);
+}
+
+.widget > div[data-status="entered"] {
+  transform: translateX(0);
 }
