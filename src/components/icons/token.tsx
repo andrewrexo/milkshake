@@ -6,6 +6,8 @@ import USDCSVG from "@web3icons/core/svgs/tokens/branded/USDC.svg?react";
 import ARBSVG from "@web3icons/core/svgs/tokens/branded/ARBI.svg?react";
 import USDT from "@web3icons/core/svgs/tokens/branded/USDT.svg?react";
 import ETH from "@web3icons/core/svgs/tokens/branded/ETH.svg?react";
+import SOL from "@web3icons/core/svgs/tokens/branded/SOL.svg?react";
+import MATIC from "@web3icons/core/svgs/tokens/branded/MATIC.svg?react";
 import CubeSVG from "../../assets/cube.svg?react";
 
 interface TokenIconProps extends React.SVGProps<SVGSVGElement> {
@@ -13,10 +15,12 @@ interface TokenIconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 const tokenIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
-  USDC: USDCSVG,
-  ARB: ARBSVG,
-  USDT: USDT,
-  ETH: ETH,
+  usdc: USDCSVG,
+  arb: ARBSVG,
+  usdt: USDT,
+  eth: ETH,
+  sol: SOL,
+  matic: MATIC,
 };
 
 const TokenIcon: React.FC<TokenIconProps> = ({ iconName, ...props }) => {

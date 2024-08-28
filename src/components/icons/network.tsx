@@ -7,6 +7,7 @@ import ArbitrumSVG from "@web3icons/core/svgs/networks/branded/arbitrum-one.svg?
 import SolanaSVG from "@web3icons/core/svgs/networks/branded/solana.svg?react";
 import BscSVG from "@web3icons/core/svgs/networks/branded/binance-smart-chain.svg?react";
 import BaseSVG from "@web3icons/core/svgs/networks/branded/base.svg?react";
+import PolygonSVG from "@web3icons/core/svgs/networks/branded/polygon-pos.svg?react";
 import CubeSVG from "../../assets/cube.svg?react";
 
 interface NetworkIconProps extends React.SVGProps<SVGSVGElement> {
@@ -19,6 +20,7 @@ const networkIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   base: BaseSVG,
   solana: SolanaSVG,
   bsc: BscSVG,
+  polygon: PolygonSVG,
 };
 
 const NetworkIcon: React.FC<NetworkIconProps> = ({ iconName, ...props }) => {

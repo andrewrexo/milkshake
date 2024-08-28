@@ -27,7 +27,7 @@ const Dashboard = () => {
           <span className="mr-2 flex items-center">
             <span className="bg-background rounded-full p-1 mt-[2px]">
               <NetworkIcon
-                iconName={selectedNetwork?.iconName || "ethereum"}
+                iconName={selectedNetwork?.id || "ethereum"}
                 width={32}
                 height={32}
               />
