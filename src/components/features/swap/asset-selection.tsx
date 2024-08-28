@@ -27,13 +27,7 @@ interface AssetSelectionProps {
   selectingFor: "from" | "to";
 }
 
-const AssetSelection: React.FC<AssetSelectionProps> = ({
-  onClose,
-  onSelect,
-  isVisible,
-  excludeAsset,
-  selectingFor,
-}) => {
+const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVisible, excludeAsset }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
   const [isNetworkSelectorExpanded, setIsNetworkSelectorExpanded] = useState(false);
