@@ -13,6 +13,10 @@ function App() {
           All demo, no bullshit
         </h1>
         <Widget />
+        <div className="flex mt-6 items-center justify-center space-x-4">
+          <ThemeSelect />
+          <ModeToggle />
+        </div>
       </div>
     </main>
   );
