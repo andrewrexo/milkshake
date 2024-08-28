@@ -1,13 +1,11 @@
-import {
-  ArchiveIcon,
-  ArrowDownIcon,
-  ArrowRightIcon,
-} from "@radix-ui/react-icons";
+import { useState, useCallback } from "react";
+import { ArchiveIcon, ArrowDownIcon } from "@radix-ui/react-icons";
 import { useAppStore } from "../../../store/useAppStore";
 import TokenIcon from "../../icons/token";
-import NetworkIcon from "../../icons/network";
+import AssetSelection from "./asset-selection";
 
 const Swap = () => {
+  const [selectingFor, setSelectingFor] = useState<"from" | "to">("from");
   const { setCurrentPage } = useAppStore();
 
   const {
@@ -17,6 +15,8 @@ const Swap = () => {
     setFromToken,
     toNetwork,
     fromNetwork,
+    setShowModal,
+    showModal,
   } = useAppStore((state) => ({
     toToken: state.toToken,
     fromToken: state.fromToken,
@@ -24,10 +24,29 @@ const Swap = () => {
     setFromToken: state.setFromToken,
     toNetwork: state.toNetwork,
     fromNetwork: state.fromNetwork,
+    setShowModal: state.setShowModal,
+    showModal: state.showModal,
   }));
 
+  const handleSelectAsset = (asset: any) => {
+    if (selectingFor === "from") {
+      setFromToken({
+        ...asset,
+      });
+    } else {
+      setToToken({
+        ...asset,
+      });
+    }
+    setShowModal(false);
+  };
+
+  const handleCloseModal = useCallback(() => {
+    setShowModal(false);
+  }, []);
+
   return (
-    <div className="flex flex-col h-full pb-4">
+    <div className="flex flex-col h-full pb-4 relative">
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setCurrentPage("connect")}
@@ -46,6 +65,9 @@ const Swap = () => {
         <div className="bg-input rounded-lg p-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">From</span>
+            <span className="text-sm text-muted font-medium">
+              {fromNetwork?.name}
+            </span>
           </div>
           <div className="flex items-center justify-between">
             <input
@@ -53,9 +75,24 @@ const Swap = () => {
               placeholder="0"
               className="text-2xl font-bold bg-transparent outline-none w-1/2"
             />
-            <button className="flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover">
-              <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-              <span>Select token</span>
+            <button
+              className="flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover"
+              onClick={() => {
+                setSelectingFor("from");
+                setShowModal(true);
+              }}
+            >
+              {fromToken ? (
+                <>
+                  <TokenIcon iconName={fromToken.id} className="w-6 h-6" />
+                  <span>{fromToken.symbol}</span>
+                </>
+              ) : (
+                <>
+                  <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+                  <span>Select token</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -69,9 +106,8 @@ const Swap = () => {
         <div className="bg-input rounded-lg p-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">To</span>
-
             <span className="text-sm text-muted font-medium">
-              {toNetwork?.name}
+              {toToken?.network?.name}
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -81,35 +117,48 @@ const Swap = () => {
               className="text-2xl font-bold bg-transparent outline-none w-1/2"
               readOnly
             />
-            <button className="flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover">
-              <TokenIcon iconName={toToken?.id ?? ""} className="w-6 h-6" />
-              <span>{toToken?.id}</span>
+            <button
+              className="flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover"
+              onClick={() => {
+                setSelectingFor("to");
+                setShowModal(true);
+              }}
+            >
+              {toToken ? (
+                <>
+                  <TokenIcon iconName={toToken.id} className="w-6 h-6" />
+                  <span>{toToken.symbol}</span>
+                </>
+              ) : (
+                <>
+                  <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+                  <span>Select token</span>
+                </>
+              )}
             </button>
           </div>
         </div>
-      </div>{" "}
-      <div className="bg-surface rounded-lg my-2">
-        <h3 className="text-lg font-semibold mb-2">Transfer Summary</h3>
-        <div className="space-y-2">
+        <div className="flex flex-col gap-4 pt-2">
           <div className="flex justify-between">
-            <span>Estimated Fee:</span>
-            <span className="font-medium">0.001 ETH</span>
+            <p className="text-sm font-medium">Network route</p>
+            <p className="text-sm font-medium text-muted">
+              {fromNetwork?.name} → {toNetwork?.name}
+            </p>
           </div>
           <div className="flex justify-between">
-            <span>Estimated Time:</span>
-            <span className="font-medium">~2 minutes</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span>Route:</span>
-            <div className="flex items-center space-x-1">
-              <NetworkIcon iconName="ethereum" className="w-4 h-4" />
-              <ArrowRightIcon className="w-4 h-4" />
-              <NetworkIcon iconName="solana" className="w-4 h-4" />
-            </div>
+            <p className="text-sm font-medium">Arrival estimate</p>
+            <p className="text-sm font-medium text-muted">Instantly</p>
           </div>
         </div>
       </div>
-      <button className="btn-primary text-center py-3 mt-auto">Transfer</button>
+      <button className="btn-primary text-center py-3 mt-2">
+        Create transfer
+      </button>
+      <AssetSelection
+        isVisible={showModal}
+        onClose={handleCloseModal}
+        onSelect={handleSelectAsset}
+      />
     </div>
   );
 };

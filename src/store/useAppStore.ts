@@ -3,13 +3,13 @@ import { create } from "zustand";
 export type Network = {
   id: string;
   name: string;
-  iconName: string;
 };
 
 type Token = {
   id: string;
   name: string;
-  iconName: string;
+  network: Network;
+  symbol: string;
 };
 
 type SwapState = {
@@ -32,22 +32,34 @@ type AppState = {
   currentPage: "connect" | "dashboard" | "swap";
   selectedNetwork: Network | null;
   availableNetworks: Network[];
+  showModal: boolean;
   setConnected: (connected: boolean) => void;
   setCurrentPage: (page: "connect" | "dashboard" | "swap") => void;
   setSelectedNetwork: (network: Network | null) => void;
+  setShowModal: (show: boolean) => void;
 };
 
 const defaultNetworks: Network[] = [
-  { id: "ethereum", name: "Ethereum", iconName: "ethereum" },
-  { id: "arbitrum", name: "Arbitrum", iconName: "arbitrum" },
-  { id: "solana", name: "Solana", iconName: "solana" },
-  { id: "bsc", name: "BSC", iconName: "bsc" },
-  { id: "base", name: "Base", iconName: "base" },
+  { id: "ethereum", name: "Ethereum" },
+  { id: "arbitrum", name: "Arbitrum" },
+  { id: "solana", name: "Solana" },
+  { id: "bsc", name: "BSC" },
+  { id: "base", name: "Base" },
 ];
 
 const defaultTokens: Token[] = [
-  { id: "USDC", name: "USDC", iconName: "USDC" },
-  { id: "ETH", name: "Ethereum", iconName: "ETH" },
+  {
+    id: "eth",
+    name: "Ethereum",
+    network: defaultNetworks[0],
+    symbol: "ETH",
+  },
+  {
+    id: "usdc",
+    name: "USD Coin",
+    network: defaultNetworks[2],
+    symbol: "USDC",
+  },
 ];
 
 export const createSwapSlice = (set: any): SwapState => ({
@@ -55,10 +67,12 @@ export const createSwapSlice = (set: any): SwapState => ({
   toToken: defaultTokens[1],
   fromAmount: "0",
   toAmount: "0",
-  fromNetwork: defaultNetworks[0],
-  toNetwork: defaultNetworks[1],
-  setFromToken: (token: Token) => set({ fromToken: token }),
-  setToToken: (token: Token) => set({ toToken: token }),
+  fromNetwork: defaultTokens[0].network,
+  toNetwork: defaultTokens[1].network,
+  setFromToken: (token: Token) =>
+    set({ fromToken: token, fromNetwork: token.network }),
+  setToToken: (token: Token) =>
+    set({ toToken: token, toNetwork: token.network }),
   setFromAmount: (amount: string) => set({ fromAmount: amount }),
   setToAmount: (amount: string) => set({ toAmount: amount }),
   setFromNetwork: (network: Network) => set({ fromNetwork: network }),
@@ -70,11 +84,13 @@ export const createAppSlice = (set: any): AppState => ({
   currentPage: "connect",
   selectedNetwork: null,
   availableNetworks: defaultNetworks,
+  showModal: false,
   setConnected: (connected: boolean) => set({ isConnected: connected }),
   setCurrentPage: (page: "connect" | "dashboard" | "swap") =>
     set({ currentPage: page }),
   setSelectedNetwork: (network: Network | null) =>
     set({ selectedNetwork: network }),
+  setShowModal: (show: boolean) => set({ showModal: show }),
 });
 
 export const useAppStore = create<AppState & SwapState>((set) => ({
