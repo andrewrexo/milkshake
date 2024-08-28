@@ -1,15 +1,22 @@
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { clusterApiUrl } from "@solana/web3.js";
 import { http, createConfig } from "wagmi";
-import { mainnet, sepolia } from "wagmi/chains";
-import { injected, safe } from "wagmi/connectors";
+import { arbitrum, base, mainnet, optimism } from "wagmi/chains";
+import { injected } from "wagmi/connectors";
 
 export const config = createConfig({
-  chains: [mainnet, sepolia],
-  connectors: [injected(), safe()],
+  chains: [mainnet, arbitrum, base, optimism],
+  connectors: [injected()],
   transports: {
     [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [arbitrum.id]: http(),
+    [base.id]: http(),
+    [optimism.id]: http(),
   },
 });
+
+export const solanaNetwork = WalletAdapterNetwork.Mainnet;
+export const solanaEndpoint = clusterApiUrl(solanaNetwork);
 
 declare module "wagmi" {
   interface Register {

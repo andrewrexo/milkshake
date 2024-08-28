@@ -8,9 +8,9 @@ import App from "./app.tsx";
 import { config } from "./wagmi.ts";
 
 import "./styles/index.css";
-import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "./themes/context/index.tsx";
 
+// @ts-ignore
 globalThis.Buffer = Buffer;
 
 const queryClient = new QueryClient();
@@ -22,7 +22,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <App />
-          <Toaster />
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
