@@ -1,6 +1,8 @@
 import { ArchiveIcon, DoubleArrowDownIcon } from "@radix-ui/react-icons";
 import { useCallback, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { useConnect } from "wagmi";
+import { useWalletConnections } from "../../../hooks/useWalletConnections";
 import { useAppStore } from "../../../store/useAppStore";
 import { useTheme } from "../../../themes/context";
 import TokenIcon from "../../icons/token";
@@ -10,6 +12,8 @@ const Swap = () => {
   const { mode } = useTheme();
   const [selectingFor, setSelectingFor] = useState<"from" | "to">("from");
   const { setCurrentPage } = useAppStore();
+  const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana } = useWalletConnections();
+  const { connectors } = useConnect();
 
   const { toToken, fromToken, setToToken, setFromToken, toNetwork, fromNetwork, setShowModal, showModal } = useAppStore(
     (state) => ({
@@ -48,6 +52,33 @@ const Swap = () => {
     }
   }, [fromToken, toToken, setFromToken, setToToken]);
 
+  const handleNetworkConnect = useCallback(
+    (network: string) => {
+      if (network === "Solana") {
+        connectSolana();
+      } else {
+        const connector = connectors[0];
+        if (connector) {
+          connectEVM(connector);
+        } else {
+          // todo: handle this better
+          alert("No EVM compatible wallets installed");
+        }
+      }
+    },
+    [connectSolana, connectEVM, connectors],
+  );
+
+  const isNetworkConnected = useCallback(
+    (network: string) => {
+      if (network === "Solana") {
+        return isSolanaConnected;
+      }
+      return isEVMConnected;
+    },
+    [isSolanaConnected, isEVMConnected],
+  );
+
   return (
     <div className="flex flex-col h-full pb-4 relative">
       <div className="flex items-center justify-between mb-4">
@@ -66,10 +97,17 @@ const Swap = () => {
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium">From</span>
             <span className="text-sm text-muted font-medium">
-              {/* biome-ignore lint/a11y/useValidAnchor: to be replaced with wallet connect button */}
-              <a href="#" className="text-primary underline decoration-1 decoration-wavy underline-offset-4">
-                {fromNetwork?.name}
-              </a>
+              {isNetworkConnected(fromNetwork?.name) ? (
+                fromNetwork?.name
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleNetworkConnect(fromNetwork?.name)}
+                  className="text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                >
+                  {fromNetwork?.name}
+                </button>
+              )}
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -114,10 +152,17 @@ const Swap = () => {
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium">To</span>
             <span className="text-sm text-muted font-medium flex gap-2">
-              {/* biome-ignore lint/a11y/useValidAnchor: to be replaced with wallet connect button */}
-              <a href="#" className="text-primary underline decoration-1 decoration-wavy underline-offset-4">
-                {toToken?.network?.name}
-              </a>
+              {isNetworkConnected(toNetwork?.name) ? (
+                toNetwork?.name
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleNetworkConnect(toNetwork?.name)}
+                  className="text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                >
+                  {toNetwork?.name}
+                </button>
+              )}
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -145,8 +190,7 @@ const Swap = () => {
                 </>
               ) : (
                 <>
-                  {/* biome-ignore lint/style/useSelfClosingElements: <explanation> */}
-                  <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+                  <div className="w-6 h-6 bg-gray-300 rounded-full" />
                   <span>Select token</span>
                 </>
               )}
