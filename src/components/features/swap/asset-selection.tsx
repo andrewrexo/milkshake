@@ -9,67 +9,15 @@ import NetworkIcon from "../../icons/network";
 import { twMerge } from "tailwind-merge";
 import { type Network } from "../../../store/useAppStore";
 import Modal from "../../ui/modal";
+import { mockAssets } from "../../../lib/mock";
 
-interface Asset {
+export interface Asset {
   id: string;
   name: string;
   symbol: string;
   network: Network;
   balance: string;
 }
-
-const mockAssets: Asset[] = [
-  {
-    id: "eth",
-    name: "Ethereum",
-    symbol: "ETH",
-    network: {
-      name: "Ethereum",
-      id: "ethereum",
-    },
-    balance: "1.5",
-  },
-  {
-    id: "usdc",
-    name: "USD Coin",
-    symbol: "USDC",
-    network: {
-      name: "Ethereum",
-      id: "ethereum",
-    },
-    balance: "1000",
-  },
-  {
-    id: "arb",
-    name: "Arbitrum",
-    symbol: "ARB",
-    network: {
-      name: "Arbitrum",
-      id: "arbitrum",
-    },
-    balance: "100",
-  },
-  {
-    id: "matic",
-    name: "Polygon",
-    symbol: "MATIC",
-    network: {
-      name: "Polygon",
-      id: "polygon",
-    },
-    balance: "500",
-  },
-  {
-    id: "sol",
-    name: "Solana",
-    symbol: "SOL",
-    network: {
-      name: "Solana",
-      id: "solana",
-    },
-    balance: "20",
-  },
-];
 
 const networks = ["ethereum", "arbitrum", "polygon", "solana", "bsc"];
 
@@ -165,7 +113,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
           <button
             key={asset.id}
             onClick={() => onSelect(asset)}
-            className="w-full flex items-center justify-between py-3 hover:px-2 rounded-lg hover:bg-input transition-all duration-200"
+            className="w-full flex items-center justify-between py-3 hover:px-2 transition-all duration-200"
           >
             <div className="flex items-center space-x-3">
               <div className="relative">
