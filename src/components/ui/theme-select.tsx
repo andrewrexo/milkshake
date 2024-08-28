@@ -7,6 +7,9 @@ const ThemeSelect = () => {
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.target instanceof HTMLInputElement) {
+        return; // Do not change theme if the event target is an input element
+      }
       const themeNames = Object.keys(themes) as ThemeName[];
       const index = Number.parseInt(event.key) - 1;
       if (index >= 0 && index < themeNames.length) {
