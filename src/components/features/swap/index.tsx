@@ -1,4 +1,4 @@
-import { ArchiveIcon, CheckCircledIcon, CheckIcon, DoubleArrowDownIcon } from "@radix-ui/react-icons";
+import { ArchiveIcon, CheckIcon, DoubleArrowDownIcon } from "@radix-ui/react-icons";
 import { useCallback, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useConnect } from "wagmi";
@@ -234,7 +234,13 @@ const Swap = () => {
       <button type="button" className="btn-primary bg-background text-center py-3">
         Create transfer
       </button>
-      <AssetSelection isVisible={showModal} onClose={handleCloseModal} onSelect={handleSelectAsset} />
+      <AssetSelection
+        isVisible={showModal}
+        onClose={handleCloseModal}
+        onSelect={handleSelectAsset}
+        selectingFor={selectingFor}
+        excludeAsset={selectingFor === "from" ? toToken : fromToken}
+      />
     </div>
   );
 };

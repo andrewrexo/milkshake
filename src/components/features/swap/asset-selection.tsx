@@ -14,7 +14,7 @@ export interface Asset {
   name: string;
   symbol: string;
   network: Network;
-  balance: string;
+  balance?: string;
 }
 
 const networks = ["ethereum", "arbitrum", "polygon", "solana", "bsc"];
@@ -23,9 +23,17 @@ interface AssetSelectionProps {
   onClose: () => void;
   onSelect: (asset: Asset) => void;
   isVisible: boolean;
+  excludeAsset?: Asset;
+  selectingFor: "from" | "to";
 }
 
-const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVisible }) => {
+const AssetSelection: React.FC<AssetSelectionProps> = ({
+  onClose,
+  onSelect,
+  isVisible,
+  excludeAsset,
+  selectingFor,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
   const [isNetworkSelectorExpanded, setIsNetworkSelectorExpanded] = useState(false);
@@ -40,6 +48,16 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
           asset.network.name.toLowerCase().includes(trimmedSearchTerm)),
     );
   }, [searchTerm, selectedNetworks]);
+
+  const sortedAssets = useMemo(() => {
+    return filteredAssets.sort((a, b) => {
+      const isAExcluded = excludeAsset && a.id === excludeAsset.id && a.network.id === excludeAsset.network.id;
+      const isBExcluded = excludeAsset && b.id === excludeAsset.id && b.network.id === excludeAsset.network.id;
+      if (isAExcluded && !isBExcluded) return -1;
+      if (!isAExcluded && isBExcluded) return 1;
+      return 0;
+    });
+  }, [filteredAssets, excludeAsset]);
 
   const toggleNetwork = (network: string) => {
     setSelectedNetworks((prev) => (prev.includes(network) ? prev.filter((n) => n !== network) : [...prev, network]));
@@ -94,33 +112,42 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
 
       <ScrollArea className={twMerge("h-[330px]", isNetworkSelectorExpanded && "h-[259px]")} viewportClassName="h-full">
         <div className="grid grid-cols-1">
-          {filteredAssets.map((asset) => (
-            <button
-              key={`${asset.symbol}-${asset.network.id}`}
-              onClick={() => onSelect(asset)}
-              className="w-full flex items-center justify-between py-3 hover:px-2 transition-all duration-200"
-              type="button"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="relative">
-                  <TokenIcon iconName={asset.id} className="w-8 h-8" />
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-surface flex items-center justify-center">
-                    <NetworkIcon iconName={asset.network.id} className="w-3 h-3" />
+          {sortedAssets.map((asset) => {
+            const isExcluded =
+              excludeAsset && asset.id === excludeAsset.id && asset.network.id === excludeAsset.network.id;
+            return (
+              <button
+                key={`${asset.symbol}-${asset.network.id}`}
+                onClick={() => !isExcluded && onSelect(asset)}
+                className={`w-full flex items-center justify-between py-3 hover:px-2 transition-all duration-200 ${
+                  isExcluded ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                type="button"
+                disabled={isExcluded}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="relative">
+                    <TokenIcon iconName={asset.id} className="w-8 h-8" />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-surface flex items-center justify-center">
+                      <NetworkIcon iconName={asset.network.id} className="w-3 h-3" />
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">{asset.name}</p>
+                    <p className="text-sm text-muted">
+                      {asset.symbol}
+                      <span className="ml-1 text-xs text-muted">on {asset.network.name}</span>
+                    </p>
                   </div>
                 </div>
-                <div className="text-left">
-                  <p className="font-medium">{asset.name}</p>
-                  <p className="text-sm text-muted">
-                    {asset.symbol}
-                    <span className="ml-1 text-xs text-muted">on {asset.network.name}</span>
-                  </p>
+                <div className="flex items-center space-x-2">
+                  {isExcluded && <span className="text-sm text-muted mt-0.5">Used</span>}
+
+                  <p className="font-medium">{asset.balance}</p>
                 </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <p className="font-medium">{asset.balance}</p>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </ScrollArea>
     </Modal>
