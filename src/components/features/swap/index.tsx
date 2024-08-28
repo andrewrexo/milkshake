@@ -3,8 +3,11 @@ import { ArchiveIcon, ArrowDownIcon } from "@radix-ui/react-icons";
 import { useAppStore } from "../../../store/useAppStore";
 import TokenIcon from "../../icons/token";
 import AssetSelection from "./asset-selection";
+import { useTheme } from "../../../themes/context";
+import { twMerge } from "tailwind-merge";
 
 const Swap = () => {
+  const { mode } = useTheme();
   const [selectingFor, setSelectingFor] = useState<"from" | "to">("from");
   const { setCurrentPage } = useAppStore();
 
@@ -76,7 +79,10 @@ const Swap = () => {
               className="text-2xl font-bold bg-transparent outline-none w-1/2"
             />
             <button
-              className="flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover"
+              className={twMerge(
+                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover",
+                mode === "dark" && "bg-surface/30 hover:bg-hover"
+              )}
               onClick={() => {
                 setSelectingFor("from");
                 setShowModal(true);
@@ -118,7 +124,10 @@ const Swap = () => {
               readOnly
             />
             <button
-              className="flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover"
+              className={twMerge(
+                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover",
+                mode === "dark" && "bg-surface/30 hover:bg-hover"
+              )}
               onClick={() => {
                 setSelectingFor("to");
                 setShowModal(true);
@@ -151,7 +160,7 @@ const Swap = () => {
           </div>
         </div>
       </div>
-      <button className="btn-primary text-center py-3 mt-2">
+      <button className="btn-primary bg-background text-center py-3 mt-2">
         Create transfer
       </button>
       <AssetSelection
