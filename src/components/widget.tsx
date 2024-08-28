@@ -1,9 +1,15 @@
+import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useAppStore } from "../store/useAppStore";
+import { solanaEndpoint } from "../wagmi";
 import Connect from "./features/connect";
 import Dashboard from "./features/dashboard";
 import Swap from "./features/swap";
+
+// Import Solana wallet styles
+import "@solana/wallet-adapter-react-ui/styles.css";
 
 const pages = {
   connect: Connect,
@@ -37,7 +43,7 @@ const Widget = () => {
     if (transitionStatus === "entering") {
       const timer = setTimeout(() => {
         setTransitionStatus("entered");
-      }, 50); // Small delay to trigger the entering animation
+      }, 50);
 
       return () => clearTimeout(timer);
     }
@@ -46,19 +52,25 @@ const Widget = () => {
   const PageComponent = pages[displayedPage];
 
   return (
-    <div className="widget flex flex-col overflow-hidden min-h-[530px]">
-      <div data-status={transitionStatus} className="h-full flex flex-col justify-between">
-        <PageComponent />
-      </div>
-      <p
-        className={twMerge(
-          "text-center text-xs text-muted z-0 transition-opacity duration-300 select-none pointer-events-none",
-          showModal ? "opacity-0" : "opacity-100",
-        )}
-      >
-        powered by milkshake.ai
-      </p>
-    </div>
+    <ConnectionProvider endpoint={solanaEndpoint}>
+      <WalletProvider wallets={[]} autoConnect>
+        <WalletModalProvider>
+          <div className="widget flex flex-col overflow-hidden min-h-[530px]">
+            <div data-status={transitionStatus} className="h-full flex flex-col justify-between">
+              <PageComponent />
+            </div>
+            <p
+              className={twMerge(
+                "text-center text-xs text-muted z-0 transition-opacity duration-300 select-none pointer-events-none",
+                showModal ? "opacity-0" : "opacity-100",
+              )}
+            >
+              powered by milkshake.ai
+            </p>
+          </div>
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
   );
 };
 
