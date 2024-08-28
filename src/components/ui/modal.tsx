@@ -28,7 +28,7 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, title, children }) =>
 
   return (
     <div
-      className={`absolute h-full inset-0 bg-surface z-10 flex flex-col transition-all duration-300 ${
+      className={`absolute h-full inset-0 bg-surface z-10 flex flex-col transition-all duration-500 ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
       }`}
     >
