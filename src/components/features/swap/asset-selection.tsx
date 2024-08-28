@@ -32,23 +32,13 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
 
   const filteredAssets = useMemo(() => {
     const trimmedSearchTerm = searchTerm.trim().toLowerCase();
-    const uniqueAssets = new Map();
-
-    mockAssets.forEach((asset) => {
-      if (
+    return mockAssets.filter(
+      (asset) =>
         (selectedNetworks.length === 0 || selectedNetworks.includes(asset.network.id)) &&
         (asset.name.toLowerCase().includes(trimmedSearchTerm) ||
           asset.symbol.toLowerCase().includes(trimmedSearchTerm) ||
-          asset.network.name.toLowerCase().includes(trimmedSearchTerm))
-      ) {
-        const key = `${asset.symbol}-${asset.network.id}`;
-        if (!uniqueAssets.has(key)) {
-          uniqueAssets.set(key, asset);
-        }
-      }
-    });
-
-    return Array.from(uniqueAssets.values());
+          asset.network.name.toLowerCase().includes(trimmedSearchTerm)),
+    );
   }, [searchTerm, selectedNetworks]);
 
   const toggleNetwork = (network: string) => {
