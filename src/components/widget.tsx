@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
 import { useAppStore } from "../store/useAppStore";
 import Connect from "./features/connect";
 import Dashboard from "./features/dashboard";
 import Swap from "./features/swap";
-import { twMerge } from "tailwind-merge";
 
 const pages = {
   connect: Connect,
@@ -47,16 +47,13 @@ const Widget = () => {
 
   return (
     <div className="widget flex flex-col overflow-hidden min-h-[530px]">
-      <div
-        data-status={transitionStatus}
-        className="h-full flex flex-col justify-between"
-      >
+      <div data-status={transitionStatus} className="h-full flex flex-col justify-between">
         <PageComponent />
       </div>
       <p
         className={twMerge(
           "text-center text-xs text-muted z-0 transition-opacity duration-300 select-none pointer-events-none",
-          showModal ? "opacity-0" : "opacity-100"
+          showModal ? "opacity-0" : "opacity-100",
         )}
       >
         powered by milkshake.ai

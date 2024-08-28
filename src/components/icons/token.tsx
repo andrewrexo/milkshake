@@ -1,13 +1,13 @@
 /// <reference types="vite-plugin-svgr/client" />
-import React from "react";
+import type React from "react";
 
+import ARBSVG from "@web3icons/core/svgs/tokens/branded/ARBI.svg?react";
+import ETH from "@web3icons/core/svgs/tokens/branded/ETH.svg?react";
+import MATIC from "@web3icons/core/svgs/tokens/branded/MATIC.svg?react";
+import SOL from "@web3icons/core/svgs/tokens/branded/SOL.svg?react";
 // we need to import the svg files directly to prevent all svgs from being bundled with the app
 import USDCSVG from "@web3icons/core/svgs/tokens/branded/USDC.svg?react";
-import ARBSVG from "@web3icons/core/svgs/tokens/branded/ARBI.svg?react";
 import USDT from "@web3icons/core/svgs/tokens/branded/USDT.svg?react";
-import ETH from "@web3icons/core/svgs/tokens/branded/ETH.svg?react";
-import SOL from "@web3icons/core/svgs/tokens/branded/SOL.svg?react";
-import MATIC from "@web3icons/core/svgs/tokens/branded/MATIC.svg?react";
 import CubeSVG from "../../assets/cube.svg?react";
 
 interface TokenIconProps extends React.SVGProps<SVGSVGElement> {

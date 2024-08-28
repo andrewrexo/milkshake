@@ -1,12 +1,12 @@
 /// <reference types="vite-plugin-svgr/client" />
-import React from "react";
+import type React from "react";
 
+import CoinbaseSVG from "@web3icons/core/svgs/wallets/branded/coinbase.svg?react";
 // we need to import the svg files directly to prevent all svgs from being bundled with the app
 import MetamaskSVG from "@web3icons/core/svgs/wallets/branded/metamask.svg?react";
-import CoinbaseSVG from "@web3icons/core/svgs/wallets/branded/coinbase.svg?react";
-import WalletConnectSVG from "@web3icons/core/svgs/wallets/branded/wallet-connect.svg?react";
-import TrustWalletSVG from "@web3icons/core/svgs/wallets/branded/trust.svg?react";
 import SafeSVG from "@web3icons/core/svgs/wallets/branded/safe.svg?react";
+import TrustWalletSVG from "@web3icons/core/svgs/wallets/branded/trust.svg?react";
+import WalletConnectSVG from "@web3icons/core/svgs/wallets/branded/wallet-connect.svg?react";
 
 import { CubeIcon } from "@radix-ui/react-icons";
 
@@ -30,7 +30,7 @@ const WalletIcon: React.FC<WalletIconProps> = ({ iconName, ...props }) => {
     return <CubeIcon className="w-6 h-6" />;
   }
 
-  return <IconComponent />;
+  return <IconComponent {...props} />;
 };
 
 export default WalletIcon;

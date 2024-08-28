@@ -1,4 +1,4 @@
-import { Connector } from "wagmi";
+import type { Connector } from "wagmi";
 import WalletIcon from "../../icons/wallet";
 
 const Icon = ({ connector }: { connector: Connector }) => {

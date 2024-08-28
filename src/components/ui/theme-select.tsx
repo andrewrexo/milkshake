@@ -1,6 +1,6 @@
-import { useTheme } from "../../themes/context";
-import { themes, type ThemeName } from "../../themes";
 import { useEffect } from "react";
+import { type ThemeName, themes } from "../../themes";
+import { useTheme } from "../../themes/context";
 
 const ThemeSelect = () => {
   const { theme, setTheme } = useTheme();
@@ -8,7 +8,7 @@ const ThemeSelect = () => {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       const themeNames = Object.keys(themes) as ThemeName[];
-      const index = parseInt(event.key) - 1;
+      const index = Number.parseInt(event.key) - 1;
       if (index >= 0 && index < themeNames.length) {
         setTheme(themeNames[index]);
       }
@@ -24,12 +24,11 @@ const ThemeSelect = () => {
     <div className="flex space-x-2">
       {Object.keys(themes).map((themeName) => (
         <button
+          type="button"
           key={themeName}
           onClick={() => setTheme(themeName as ThemeName)}
           className={`px-4 py-2 rounded ${
-            theme === themeName
-              ? "bg-primary text-background"
-              : "bg-secondary text-text"
+            theme === themeName ? "bg-primary text-background" : "bg-secondary text-text"
           }`}
         >
           {themeName}

@@ -1,15 +1,12 @@
-import React, { useState } from "react";
-import {
-  MagnifyingGlassIcon,
-  CaretDownIcon,
-  CaretUpIcon,
-} from "@radix-ui/react-icons";
-import TokenIcon from "../../icons/token";
-import NetworkIcon from "../../icons/network";
+import { CaretDownIcon, CaretUpIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import type React from "react";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { type Network } from "../../../store/useAppStore";
-import Modal from "../../ui/modal";
 import { mockAssets } from "../../../lib/mock";
+import type { Network } from "../../../store/useAppStore";
+import NetworkIcon from "../../icons/network";
+import TokenIcon from "../../icons/token";
+import Modal from "../../ui/modal";
 
 export interface Asset {
   id: string;
@@ -27,31 +24,21 @@ interface AssetSelectionProps {
   isVisible: boolean;
 }
 
-const AssetSelection: React.FC<AssetSelectionProps> = ({
-  onClose,
-  onSelect,
-  isVisible,
-}) => {
+const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVisible }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
-  const [isNetworkSelectorExpanded, setIsNetworkSelectorExpanded] =
-    useState(false);
+  const [isNetworkSelectorExpanded, setIsNetworkSelectorExpanded] = useState(false);
 
   const filteredAssets = mockAssets.filter(
     (asset) =>
-      (selectedNetworks.includes(asset.network.id) ||
-        selectedNetworks.length === 0) &&
+      (selectedNetworks.includes(asset.network.id) || selectedNetworks.length === 0) &&
       (asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         asset.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        asset.network.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        asset.network.name.toLowerCase().includes(searchTerm.toLowerCase())),
   );
 
   const toggleNetwork = (network: string) => {
-    setSelectedNetworks((prev) =>
-      prev.includes(network)
-        ? prev.filter((n) => n !== network)
-        : [...prev, network]
-    );
+    setSelectedNetworks((prev) => (prev.includes(network) ? prev.filter((n) => n !== network) : [...prev, network]));
   };
 
   return (
@@ -69,17 +56,12 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
 
       <div className="mb-2">
         <button
-          onClick={() =>
-            setIsNetworkSelectorExpanded(!isNetworkSelectorExpanded)
-          }
+          onClick={() => setIsNetworkSelectorExpanded(!isNetworkSelectorExpanded)}
           className="flex items-center space-x-2 text-sm text-muted hover:text-text transition-colors duration-200"
+          type="button"
         >
           <span>Filter by network</span>
-          {isNetworkSelectorExpanded ? (
-            <CaretUpIcon className="w-4 h-4" />
-          ) : (
-            <CaretDownIcon className="w-4 h-4" />
-          )}
+          {isNetworkSelectorExpanded ? <CaretUpIcon className="w-4 h-4" /> : <CaretDownIcon className="w-4 h-4" />}
         </button>
         {isNetworkSelectorExpanded && (
           <div className="mt-2 flex flex-wrap gap-2">
@@ -88,10 +70,9 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
                 key={network}
                 onClick={() => toggleNetwork(network)}
                 className={`px-3 py-1 rounded-full text-sm transition-colors duration-200 ${
-                  selectedNetworks.includes(network)
-                    ? "bg-primary text-white"
-                    : "bg-input text-text hover:bg-hover"
+                  selectedNetworks.includes(network) ? "bg-primary text-white" : "bg-input text-text hover:bg-hover"
                 }`}
+                type="button"
               >
                 <div className="flex items-center space-x-1">
                   <NetworkIcon iconName={network} className="w-4 h-4" />
@@ -106,7 +87,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
       <div
         className={twMerge(
           "grid grid-cols-1 overflow-y-auto max-h-[calc(100%-80px)]",
-          isNetworkSelectorExpanded ? "max-h-[260px]" : ""
+          isNetworkSelectorExpanded ? "max-h-[260px]" : "",
         )}
       >
         {filteredAssets.map((asset) => (
@@ -114,24 +95,20 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
             key={asset.id}
             onClick={() => onSelect(asset)}
             className="w-full flex items-center justify-between py-3 hover:px-2 transition-all duration-200"
+            type="button"
           >
             <div className="flex items-center space-x-3">
               <div className="relative">
                 <TokenIcon iconName={asset.id} className="w-8 h-8" />
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-surface flex items-center justify-center">
-                  <NetworkIcon
-                    iconName={asset.network.id}
-                    className="w-3 h-3"
-                  />
+                  <NetworkIcon iconName={asset.network.id} className="w-3 h-3" />
                 </div>
               </div>
               <div className="text-left">
                 <p className="font-medium">{asset.name}</p>
                 <p className="text-sm text-muted">
                   {asset.symbol}
-                  <span className="ml-1 text-xs text-muted">
-                    on {asset.network.name}
-                  </span>
+                  <span className="ml-1 text-xs text-muted">on {asset.network.name}</span>
                 </p>
               </div>
             </div>

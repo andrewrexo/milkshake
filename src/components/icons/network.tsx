@@ -1,13 +1,13 @@
 /// <reference types="vite-plugin-svgr/client" />
-import React from "react";
+import type React from "react";
 
+import ArbitrumSVG from "@web3icons/core/svgs/networks/branded/arbitrum-one.svg?react";
+import BaseSVG from "@web3icons/core/svgs/networks/branded/base.svg?react";
+import BscSVG from "@web3icons/core/svgs/networks/branded/binance-smart-chain.svg?react";
 // we need to import the svg files directly to prevent all svgs from being bundled with the app
 import EthereumSVG from "@web3icons/core/svgs/networks/branded/ethereum.svg?react";
-import ArbitrumSVG from "@web3icons/core/svgs/networks/branded/arbitrum-one.svg?react";
-import SolanaSVG from "@web3icons/core/svgs/networks/branded/solana.svg?react";
-import BscSVG from "@web3icons/core/svgs/networks/branded/binance-smart-chain.svg?react";
-import BaseSVG from "@web3icons/core/svgs/networks/branded/base.svg?react";
 import PolygonSVG from "@web3icons/core/svgs/networks/branded/polygon-pos.svg?react";
+import SolanaSVG from "@web3icons/core/svgs/networks/branded/solana.svg?react";
 import CubeSVG from "../../assets/cube.svg?react";
 
 interface NetworkIconProps extends React.SVGProps<SVGSVGElement> {

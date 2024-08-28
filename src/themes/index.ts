@@ -1,9 +1,9 @@
 import { baseTheme } from "./base";
+import { coffee } from "./coffee";
 import { forest } from "./forest";
+import { lavender } from "./lavender";
 import { ocean } from "./ocean";
 import { sunset } from "./sunset";
-import { lavender } from "./lavender";
-import { coffee } from "./coffee";
 
 export const themes = {
   base: baseTheme,

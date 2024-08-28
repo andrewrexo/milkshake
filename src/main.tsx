@@ -8,13 +8,14 @@ import App from "./app.tsx";
 import { config } from "./wagmi.ts";
 
 import "./styles/index.css";
-import { ThemeProvider } from "./themes/context/index.tsx";
 import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "./themes/context/index.tsx";
 
 globalThis.Buffer = Buffer;
 
 const queryClient = new QueryClient();
 
+// biome-ignore lint/style/noNonNullAssertion: <needed for now>
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <WagmiProvider config={config}>
@@ -25,5 +26,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

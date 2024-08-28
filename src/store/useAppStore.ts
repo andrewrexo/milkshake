@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { type StateCreator, create } from "zustand";
 
 export type Network = {
   id: string;
@@ -62,38 +62,34 @@ const defaultTokens: Token[] = [
   },
 ];
 
-export const createSwapSlice = (set: any): SwapState => ({
+export const createSwapSlice: StateCreator<SwapState> = (set): SwapState => ({
   fromToken: defaultTokens[0],
   toToken: defaultTokens[1],
   fromAmount: "0",
   toAmount: "0",
   fromNetwork: defaultTokens[0].network,
   toNetwork: defaultTokens[1].network,
-  setFromToken: (token: Token) =>
-    set({ fromToken: token, fromNetwork: token.network }),
-  setToToken: (token: Token) =>
-    set({ toToken: token, toNetwork: token.network }),
+  setFromToken: (token: Token) => set({ fromToken: token, fromNetwork: token.network }),
+  setToToken: (token: Token) => set({ toToken: token, toNetwork: token.network }),
   setFromAmount: (amount: string) => set({ fromAmount: amount }),
   setToAmount: (amount: string) => set({ toAmount: amount }),
   setFromNetwork: (network: Network) => set({ fromNetwork: network }),
   setToNetwork: (network: Network) => set({ toNetwork: network }),
 });
 
-export const createAppSlice = (set: any): AppState => ({
+export const createAppSlice: StateCreator<AppState> = (set): AppState => ({
   isConnected: false,
   currentPage: "connect",
   selectedNetwork: null,
   availableNetworks: defaultNetworks,
   showModal: false,
   setConnected: (connected: boolean) => set({ isConnected: connected }),
-  setCurrentPage: (page: "connect" | "dashboard" | "swap") =>
-    set({ currentPage: page }),
-  setSelectedNetwork: (network: Network | null) =>
-    set({ selectedNetwork: network }),
+  setCurrentPage: (page: "connect" | "dashboard" | "swap") => set({ currentPage: page }),
+  setSelectedNetwork: (network: Network | null) => set({ selectedNetwork: network }),
   setShowModal: (show: boolean) => set({ showModal: show }),
 });
 
-export const useAppStore = create<AppState & SwapState>((set) => ({
-  ...createAppSlice(set),
-  ...createSwapSlice(set),
+export const useAppStore = create<AppState & SwapState>()((...args) => ({
+  ...createAppSlice(...args),
+  ...createSwapSlice(...args),
 }));

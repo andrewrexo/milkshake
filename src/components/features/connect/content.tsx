@@ -1,8 +1,8 @@
-import { type Connector, useConnect } from "wagmi";
-import Icon from "./icon";
-import { useAppStore } from "../../../store/useAppStore";
-import Networks from "./networks";
 import { EnterIcon } from "@radix-ui/react-icons";
+import { type Connector, useConnect } from "wagmi";
+import { useAppStore } from "../../../store/useAppStore";
+import Icon from "./icon";
+import Networks from "./networks";
 
 const ConnectContent = () => {
   const { connectors, connect } = useConnect();
@@ -19,7 +19,7 @@ const ConnectContent = () => {
         onError: () => {
           // Handle error
         },
-      }
+      },
     );
   };
 
@@ -30,6 +30,7 @@ const ConnectContent = () => {
         {connectors.map((connector: Connector) => (
           <button
             key={connector.uid}
+            type="button"
             onClick={() => handleConnect(connector)}
             className="btn-primary text-md py-4 hover-input"
           >
@@ -42,12 +43,13 @@ const ConnectContent = () => {
       </div>
 
       <div className="mt-4 pb-4 flex items-center">
-        <div className="flex-grow border-t border-muted"></div>
+        <div className="flex-grow border-t border-muted" />
         <span className="mx-4 text-sm text-muted">or</span>
-        <div className="flex-grow border-t border-muted"></div>
+        <div className="flex-grow border-t border-muted" />
       </div>
       <button
         onClick={() => setCurrentPage("swap")}
+        type="button"
         className=" w-full btn-primary text-md py-4 hover-input flex items-center rounded-xl text-primary"
       >
         <span className="text-xl mr-2">🍦</span>

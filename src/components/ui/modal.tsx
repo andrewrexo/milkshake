@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import type React from "react";
+import { useEffect } from "react";
 
 interface ModalProps {
   isVisible: boolean;
@@ -8,12 +9,7 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({
-  isVisible,
-  onClose,
-  title,
-  children,
-}) => {
+const Modal: React.FC<ModalProps> = ({ isVisible, onClose, title, children }) => {
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -38,7 +34,7 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div className="flex justify-between items-center p-4 border-b border-border">
         <h2 className="text-xl font-bold">{title}</h2>
-        <button onClick={onClose} className="p-1 rounded-full hover:bg-input">
+        <button type="button" onClick={onClose} className="p-1 rounded-full hover:bg-input">
           <Cross2Icon className="w-5 h-5" />
         </button>
       </div>

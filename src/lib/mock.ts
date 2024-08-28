@@ -1,4 +1,4 @@
-import { type Asset } from "../components/features/swap/asset-selection";
+import type { Asset } from "../components/features/swap/asset-selection";
 
 export const mockAssets: Asset[] = [
   {
