@@ -71,10 +71,15 @@ const Swap = () => {
             mode === "dark" && "bg-background"
           )}
         >
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium">From</span>
             <span className="text-sm text-muted font-medium">
-              {fromNetwork?.name}
+              <a
+                href="#"
+                className="text-primary underline decoration-1 decoration-wavy underline-offset-4"
+              >
+                {fromNetwork?.name}
+              </a>
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -120,10 +125,15 @@ const Swap = () => {
             mode === "dark" && "bg-background"
           )}
         >
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium">To</span>
-            <span className="text-sm text-muted font-medium">
-              {toToken?.network?.name}
+            <span className="text-sm text-muted font-medium flex gap-2">
+              <a
+                href="#"
+                className="text-primary underline decoration-1 decoration-wavy underline-offset-4"
+              >
+                {toToken?.network?.name}
+              </a>
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -157,7 +167,7 @@ const Swap = () => {
             </button>
           </div>
         </div>
-        <div className="flex flex-col gap-4 pt-2">
+        <div className="flex flex-col gap-2 pt-2">
           <div className="flex justify-between">
             <p className="text-sm font-medium">Network route</p>
             <p className="text-sm font-medium text-muted">
@@ -170,7 +180,7 @@ const Swap = () => {
           </div>
         </div>
       </div>
-      <button className="btn-primary bg-background text-center py-3 mt-2">
+      <button className="btn-primary bg-background text-center py-3">
         Create transfer
       </button>
       <AssetSelection
