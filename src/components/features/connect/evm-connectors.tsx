@@ -12,9 +12,13 @@ type EVMConnectorsProps = {
 const EVMConnectors = ({ isConnected, onConnect }: EVMConnectorsProps) => {
   const { connectors } = useConnect();
 
+  const uniqueConnectors = connectors.filter(
+    (connector, index, self) => index === self.findIndex((t) => t.name === connector.name),
+  );
+
   return (
     <>
-      {connectors.map((connector: Connector) => (
+      {uniqueConnectors.map((connector: Connector) => (
         <button
           key={connector.uid}
           type="button"
@@ -27,14 +31,14 @@ const EVMConnectors = ({ isConnected, onConnect }: EVMConnectorsProps) => {
           disabled={isConnected}
         >
           <div className="flex items-center gap-2 font-medium">
-            <Icon connector={connector} />
+            <Icon connector={connector} className="w-6 h-6" />
             <div className="flex items-center gap-1">{connector.name}</div>
           </div>
           {isConnected && <CheckIcon className="w-6 h-6 ml-auto" />}
           <span
             className={twMerge("bg-secondary px-2 py-1 rounded-full text-xs text-input", isConnected ? "" : "ml-auto")}
           >
-            ETH
+            EVM
           </span>
         </button>
       ))}
