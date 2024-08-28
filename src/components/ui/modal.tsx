@@ -38,7 +38,7 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, title, children }) =>
           <Cross2Icon className="w-5 h-5" />
         </button>
       </div>
-      <div className="px-2 py-4 h-full">{children}</div>
+      <div className="py-4 h-full">{children}</div>
     </div>
   );
 };
