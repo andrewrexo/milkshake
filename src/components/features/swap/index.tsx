@@ -65,7 +65,12 @@ const Swap = () => {
         </div>
       </div>
       <div className="flex flex-col space-y-2 mb-4">
-        <div className="bg-input rounded-lg p-4">
+        <div
+          className={twMerge(
+            "bg-input rounded-lg p-4",
+            mode === "dark" && "bg-background"
+          )}
+        >
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">From</span>
             <span className="text-sm text-muted font-medium">
@@ -81,7 +86,7 @@ const Swap = () => {
             <button
               className={twMerge(
                 "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover",
-                mode === "dark" && "bg-surface/30 hover:bg-hover"
+                mode === "dark" && "bg-surface/80 hover:bg-surface"
               )}
               onClick={() => {
                 setSelectingFor("from");
@@ -109,7 +114,12 @@ const Swap = () => {
           </button>
         </div>
 
-        <div className="bg-input rounded-lg p-4">
+        <div
+          className={twMerge(
+            "bg-input rounded-lg p-4",
+            mode === "dark" && "bg-background"
+          )}
+        >
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">To</span>
             <span className="text-sm text-muted font-medium">
@@ -126,7 +136,7 @@ const Swap = () => {
             <button
               className={twMerge(
                 "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover",
-                mode === "dark" && "bg-surface/30 hover:bg-hover"
+                mode === "dark" && "bg-surface/80 hover:bg-surface"
               )}
               onClick={() => {
                 setSelectingFor("to");
