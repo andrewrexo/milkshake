@@ -1,6 +1,6 @@
 import { CaretDownIcon, CaretUpIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import type React from "react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { mockAssets } from "../../../lib/mock";
 import type { Network } from "../../../store/useAppStore";
@@ -30,16 +30,33 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
   const [isNetworkSelectorExpanded, setIsNetworkSelectorExpanded] = useState(false);
 
-  const filteredAssets = mockAssets.filter(
-    (asset) =>
-      (selectedNetworks.includes(asset.network.id) || selectedNetworks.length === 0) &&
-      (asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        asset.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        asset.network.name.toLowerCase().includes(searchTerm.toLowerCase())),
-  );
+  const filteredAssets = useMemo(() => {
+    const trimmedSearchTerm = searchTerm.trim().toLowerCase();
+    const uniqueAssets = new Map();
+
+    mockAssets.forEach((asset) => {
+      if (
+        (selectedNetworks.length === 0 || selectedNetworks.includes(asset.network.id)) &&
+        (asset.name.toLowerCase().includes(trimmedSearchTerm) ||
+          asset.symbol.toLowerCase().includes(trimmedSearchTerm) ||
+          asset.network.name.toLowerCase().includes(trimmedSearchTerm))
+      ) {
+        const key = `${asset.symbol}-${asset.network.id}`;
+        if (!uniqueAssets.has(key)) {
+          uniqueAssets.set(key, asset);
+        }
+      }
+    });
+
+    return Array.from(uniqueAssets.values());
+  }, [searchTerm, selectedNetworks]);
 
   const toggleNetwork = (network: string) => {
     setSelectedNetworks((prev) => (prev.includes(network) ? prev.filter((n) => n !== network) : [...prev, network]));
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
   return (
@@ -49,7 +66,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
           type="text"
           placeholder="Search assets..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           className="w-full py-2 pl-10 pr-4 bg-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-secondary"
         />
         <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted" />
@@ -89,7 +106,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
         <div className="grid grid-cols-1">
           {filteredAssets.map((asset) => (
             <button
-              key={asset.id}
+              key={`${asset.symbol}-${asset.network.id}`}
               onClick={() => onSelect(asset)}
               className="w-full flex items-center justify-between py-3 hover:px-2 transition-all duration-200"
               type="button"

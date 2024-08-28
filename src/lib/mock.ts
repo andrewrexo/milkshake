@@ -51,4 +51,24 @@ export const mockAssets: Asset[] = [
     },
     balance: "20",
   },
+  {
+    id: "usdt",
+    name: "Tether",
+    symbol: "USDT",
+    network: {
+      name: "Solana",
+      id: "solana",
+    },
+    balance: "125",
+  },
+  {
+    id: "usdc",
+    name: "USD Coin",
+    symbol: "USDC",
+    network: {
+      name: "Solana",
+      id: "solana",
+    },
+    balance: "50.2111",
+  },
 ];
