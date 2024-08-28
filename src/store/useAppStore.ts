@@ -13,12 +13,12 @@ type Token = {
 };
 
 type SwapState = {
-  fromToken: Token | null;
-  toToken: Token | null;
-  fromAmount: string | null;
+  fromToken: Token;
+  toToken: Token;
+  fromAmount: string;
   toAmount: string | null;
-  fromNetwork: Network | null;
-  toNetwork: Network | null;
+  fromNetwork: Network;
+  toNetwork: Network;
   setFromToken: (token: Token) => void;
   setToToken: (token: Token) => void;
   setFromAmount: (amount: string) => void;
