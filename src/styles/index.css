@@ -56,7 +56,6 @@
 
   .input {
     @apply w-full py-3 px-4 bg-input rounded-lg text-text border border-border focus:outline-none focus:ring-2 focus:ring-primary;
-    @apply placeholder:text-muted;
   }
   
   .widget {

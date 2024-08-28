@@ -63,13 +63,13 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
 
   return (
     <Modal isVisible={isVisible} onClose={onClose} title="Select Asset">
-      <div className="relative mb-4">
+      <div className="relative mb-4 w-full">
         <input
           type="text"
           placeholder="Search assets..."
           value={searchTerm}
           onChange={handleSearchChange}
-          className="w-full py-2 pl-10 pr-4 bg-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-secondary"
+          className="w-full py-2 pl-10 pr-4 bg-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted" />
       </div>
