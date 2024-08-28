@@ -2,16 +2,11 @@ import { type Connector, useConnect } from "wagmi";
 import Icon from "./icon";
 import { useAppStore } from "../../../store/useAppStore";
 import Networks from "./networks";
-import {
-  ArrowRightIcon,
-  EnterIcon,
-  PinTopIcon,
-  ShuffleIcon,
-} from "@radix-ui/react-icons";
+import { EnterIcon } from "@radix-ui/react-icons";
 
 const ConnectContent = () => {
   const { connectors, connect } = useConnect();
-  const { setConnected, setCurrentPage, selectedNetwork } = useAppStore();
+  const { setConnected, setCurrentPage } = useAppStore();
 
   const handleConnect = (connector: Connector) => {
     connect(
@@ -47,9 +42,9 @@ const ConnectContent = () => {
       </div>
 
       <div className="mt-4 pb-4 flex items-center">
-        <div className="flex-grow border-t border-primary"></div>
+        <div className="flex-grow border-t border-muted"></div>
         <span className="mx-4 text-sm text-muted">or</span>
-        <div className="flex-grow border-t border-primary"></div>
+        <div className="flex-grow border-t border-muted"></div>
       </div>
       <button
         onClick={() => setCurrentPage("swap")}
