@@ -10,15 +10,15 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --color-primary: 59 130 246;
-  --color-secondary: 107 114 128;
-  --color-background: 243 244 246;
-  --color-text: 31 41 55;
+  --color-primary: 121 85 72;
+  --color-secondary: 161 136 127;
+  --color-background: 239 235 233;
+  --color-border: 215 204 200;
   --color-surface: 255 255 255;
-  --color-muted: 156 163 175;
-  --color-border: 229 231 235;
-  --color-input: 235 237 240;
-  --color-hover: 243 244 246;
+  --color-text: 62 39 35;
+  --color-muted: 141 110 99;
+  --color-input: 245 245 245;
+  --color-hover: 230 224 221;
 }
 
 @layer base {
