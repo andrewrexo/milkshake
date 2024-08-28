@@ -1,63 +1,42 @@
-import { EnterIcon } from "@radix-ui/react-icons";
-import { type Connector, useConnect } from "wagmi";
+import { useCallback } from "react";
+import { useWalletConnections } from "../../../hooks/useWalletConnections";
 import { useAppStore } from "../../../store/useAppStore";
-import Icon from "./icon";
+import EVMConnectors from "./evm-connectors";
 import Networks from "./networks";
+import SolanaConnector from "./solana-connector";
+import StartButton from "./start-button";
 
 const ConnectContent = () => {
-  const { connectors, connect } = useConnect();
-  const { setConnected, setCurrentPage } = useAppStore();
+  const { setCurrentPage } = useAppStore();
+  const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana } = useWalletConnections();
 
-  const handleConnect = (connector: Connector) => {
-    connect(
-      { connector },
-      {
-        onSuccess: () => {
-          setConnected(true);
-          setCurrentPage("dashboard");
-        },
-        onError: () => {
-          // Handle error
-        },
-      },
-    );
-  };
+  const handleStartSwapping = useCallback(() => {
+    setCurrentPage("swap");
+  }, [setCurrentPage]);
 
   return (
     <>
       <Networks />
       <div className="grid grid-cols-1 gap-2 rounded-lg">
-        {connectors.map((connector: Connector) => (
-          <button
-            key={connector.uid}
-            type="button"
-            onClick={() => handleConnect(connector)}
-            className="btn-primary text-md py-4 hover-input"
-          >
-            <div className="flex items-center gap-2">
-              <Icon connector={connector} />
-              <span className="font-medium">{connector.name}</span>
-            </div>
-          </button>
-        ))}
+        <EVMConnectors isConnected={isEVMConnected} onConnect={connectEVM} />
+        <SolanaConnector isConnected={isSolanaConnected} onConnect={connectSolana} />
       </div>
-
-      <div className="mt-4 pb-4 flex items-center">
-        <div className="flex-grow border-t border-muted" />
-        <span className="mx-4 text-sm text-muted">or</span>
-        <div className="flex-grow border-t border-muted" />
-      </div>
-      <button
-        onClick={() => setCurrentPage("swap")}
-        type="button"
-        className=" w-full btn-primary text-md py-4 hover-input flex items-center rounded-xl text-primary"
-      >
-        <span className="text-xl mr-2">🍦</span>
-        Start without connecting
-        <EnterIcon className="w-4 h-4 ml-auto" />
-      </button>
+      <Divider />
+      <StartButton
+        isEVMConnected={isEVMConnected}
+        isSolanaConnected={isSolanaConnected}
+        onClick={handleStartSwapping}
+      />
     </>
   );
 };
+
+const Divider = () => (
+  <div className="mt-4 pb-4 flex items-center">
+    <div className="flex-grow border-t border-muted" />
+    <span className="mx-4 text-sm text-muted">or</span>
+    <div className="flex-grow border-t border-muted" />
+  </div>
+);
 
 export default ConnectContent;
