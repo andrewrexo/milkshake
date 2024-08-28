@@ -1,5 +1,9 @@
 import { useState, useCallback } from "react";
-import { ArchiveIcon, ArrowDownIcon } from "@radix-ui/react-icons";
+import {
+  ArchiveIcon,
+  ArrowDownIcon,
+  DoubleArrowDownIcon,
+} from "@radix-ui/react-icons";
 import { useAppStore } from "../../../store/useAppStore";
 import TokenIcon from "../../icons/token";
 import AssetSelection from "./asset-selection";
@@ -47,6 +51,13 @@ const Swap = () => {
   const handleCloseModal = useCallback(() => {
     setShowModal(false);
   }, []);
+
+  const handleReverseTokens = useCallback(() => {
+    if (fromToken && toToken) {
+      setFromToken(toToken);
+      setToToken(fromToken);
+    }
+  }, [fromToken, toToken, setFromToken, setToToken]);
 
   return (
     <div className="flex flex-col h-full pb-4 relative">
@@ -114,8 +125,11 @@ const Swap = () => {
         </div>
 
         <div className="flex justify-center">
-          <button className="p-2 rounded-full bg-surface hover:bg-hover">
-            <ArrowDownIcon className="w-5 h-5" />
+          <button
+            className="p-2 rounded-full bg-surface hover:bg-hover hover:scale-105 transition-transform duration-300 active:scale-90"
+            onClick={handleReverseTokens}
+          >
+            <DoubleArrowDownIcon className="w-5 h-5" />
           </button>
         </div>
 
