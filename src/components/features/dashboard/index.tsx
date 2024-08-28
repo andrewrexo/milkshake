@@ -1,22 +1,18 @@
 import { useDisconnect } from "wagmi";
 import { useAppStore } from "../../../store/useAppStore";
 import {
-  ArrowRightIcon,
   GearIcon,
   HamburgerMenuIcon,
-  LockOpen1Icon,
-  LoopIcon,
   PersonIcon,
   ShuffleIcon,
-  ThickArrowRightIcon,
+  LoopIcon,
 } from "@radix-ui/react-icons";
 import NetworkIcon from "../../icons/network";
 import WalletIcon from "../../icons/wallet";
 
 const Dashboard = () => {
   const { disconnect } = useDisconnect();
-  const setConnected = useAppStore((state) => state.setConnected);
-  const setCurrentPage = useAppStore((state) => state.setCurrentPage);
+  const { setConnected, setCurrentPage, selectedNetwork } = useAppStore();
 
   const handleDisconnect = () => {
     disconnect();
@@ -30,7 +26,11 @@ const Dashboard = () => {
         <div className="flex items-center">
           <span className="mr-2 flex items-center">
             <span className="bg-background rounded-full p-1 mt-[2px]">
-              <NetworkIcon iconName="ethereum" width={32} height={32} />
+              <NetworkIcon
+                iconName={selectedNetwork?.iconName || "ethereum"}
+                width={32}
+                height={32}
+              />
             </span>
           </span>
           <div className="flex flex-col items-start">
@@ -56,7 +56,10 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-2 mb-4">
-        <button className="btn-primary flex items-center justify-center py-3">
+        <button
+          className="btn-primary flex items-center justify-center py-3"
+          onClick={() => setCurrentPage("swap")}
+        >
           <span className="mr-2">
             <ShuffleIcon className="w-4 h-4" />
           </span>

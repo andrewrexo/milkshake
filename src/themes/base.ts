@@ -2,7 +2,7 @@ export const baseTheme = {
   light: {
     primary: "100 115 125",
     secondary: "75 89 100",
-    background: "255 255 255",
+    background: "250 250 250",
     border: "230 230 230",
     surface: "255 255 255",
     text: "10 10 10",

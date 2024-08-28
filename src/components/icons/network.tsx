@@ -4,6 +4,8 @@ import React from "react";
 // we need to import the svg files directly to prevent all svgs from being bundled with the app
 import EthereumSVG from "@web3icons/core/svgs/networks/branded/ethereum.svg?react";
 import ArbitrumSVG from "@web3icons/core/svgs/networks/branded/arbitrum-one.svg?react";
+import SolanaSVG from "@web3icons/core/svgs/networks/branded/solana.svg?react";
+import BscSVG from "@web3icons/core/svgs/networks/branded/binance-smart-chain.svg?react";
 import BaseSVG from "@web3icons/core/svgs/networks/branded/base.svg?react";
 import CubeSVG from "../../assets/cube.svg?react";
 
@@ -15,6 +17,8 @@ const networkIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   ethereum: EthereumSVG,
   arbitrum: ArbitrumSVG,
   base: BaseSVG,
+  solana: SolanaSVG,
+  bsc: BscSVG,
 };
 
 const NetworkIcon: React.FC<NetworkIconProps> = ({ iconName, ...props }) => {

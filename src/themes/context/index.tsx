@@ -19,7 +19,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [theme, setTheme] = useState<ThemeName>("sunset");
+  const [theme, setTheme] = useState<ThemeName>("coffee");
   const [mode, setMode] = useState<ThemeMode>("light");
 
   useEffect(() => {

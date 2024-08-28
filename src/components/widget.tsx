@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { useAppStore } from "../store/useAppStore";
 import Connect from "./features/connect";
 import Dashboard from "./features/dashboard";
+import Swap from "./features/swap";
 
 const pages = {
   connect: Connect,
   dashboard: Dashboard,
+  swap: Swap,
 };
 
 const Widget = () => {
@@ -43,7 +45,9 @@ const Widget = () => {
       <div data-status={transitionStatus} className="h-full">
         <PageComponent />
       </div>
-      <p className="mt-auto text-center text-xs text-primary">milkshake.ai</p>
+      <p className="mt-auto text-center text-xs text-muted">
+        powered by milkshake.ai
+      </p>
     </div>
   );
 };
