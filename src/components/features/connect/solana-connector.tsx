@@ -23,13 +23,14 @@ const SolanaConnector = ({ isConnected, onConnect }: SolanaConnectorProps) => {
       )}
       disabled={isConnected}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 font-medium">
         <Icon connector={{ name: "Solana" }} />
-        <span className="font-medium">
-          {walletName ? `${wallet?.adapter.name.concat(" (SOL)") ?? "Solana"}` : "Solana"}
-        </span>
+        <div className="flex items-center gap-1">{walletName ? `${wallet?.adapter.name ?? "Solana"}` : "Solana"}</div>
       </div>
       {isConnected && <CheckIcon className="w-6 h-6 ml-auto" />}
+      <span className={twMerge("bg-secondary px-2 py-1 rounded-full text-xs text-input", !isConnected && "ml-auto")}>
+        SOL
+      </span>
     </button>
   );
 };
