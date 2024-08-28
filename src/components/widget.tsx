@@ -3,6 +3,7 @@ import { useAppStore } from "../store/useAppStore";
 import Connect from "./features/connect";
 import Dashboard from "./features/dashboard";
 import Swap from "./features/swap";
+import { twMerge } from "tailwind-merge";
 
 const pages = {
   connect: Connect,
@@ -11,7 +12,11 @@ const pages = {
 };
 
 const Widget = () => {
-  const currentPage = useAppStore((state) => state.currentPage);
+  const { currentPage, showModal } = useAppStore((state) => ({
+    currentPage: state.currentPage,
+    showModal: state.showModal,
+  }));
+
   const [displayedPage, setDisplayedPage] = useState(currentPage);
   const [transitionStatus, setTransitionStatus] = useState("entered");
 
@@ -41,11 +46,19 @@ const Widget = () => {
   const PageComponent = pages[displayedPage];
 
   return (
-    <div className="widget relative overflow-hidden min-h-[500px] pb-8">
-      <div data-status={transitionStatus} className="h-full">
+    <div className="widget flex flex-col overflow-hidden min-h-[530px]">
+      <div
+        data-status={transitionStatus}
+        className="h-full flex flex-col justify-between"
+      >
         <PageComponent />
       </div>
-      <p className="mt-auto text-center text-xs text-muted">
+      <p
+        className={twMerge(
+          "text-center text-xs text-muted z-0 transition-opacity duration-300 select-none pointer-events-none",
+          showModal ? "opacity-0" : "opacity-100"
+        )}
+      >
         powered by milkshake.ai
       </p>
     </div>
