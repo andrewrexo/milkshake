@@ -1,4 +1,4 @@
-import { CaretDownIcon, CaretUpIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { CaretDownIcon, CaretUpIcon, MagnifyingGlassIcon, ResetIcon } from "@radix-ui/react-icons";
 import type React from "react";
 import { useState, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
@@ -81,14 +81,29 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
       </div>
 
       <div className="mb-2">
-        <button
-          onClick={() => setIsNetworkSelectorExpanded(!isNetworkSelectorExpanded)}
-          className="flex items-center space-x-2 text-sm text-muted hover:text-text transition-colors duration-200"
-          type="button"
-        >
-          <span>Filter by network</span>
-          {isNetworkSelectorExpanded ? <CaretUpIcon className="w-4 h-4" /> : <CaretDownIcon className="w-4 h-4" />}
-        </button>
+        <div className="flex justify-between">
+          <button
+            onClick={() => setIsNetworkSelectorExpanded(!isNetworkSelectorExpanded)}
+            className="flex items-center space-x-1 text-sm text-muted hover:text-text transition-colors duration-200"
+            type="button"
+          >
+            <span>Filter by network</span>
+            {isNetworkSelectorExpanded ? <CaretUpIcon className="w-4 h-4" /> : <CaretDownIcon className="w-4 h-4" />}
+          </button>
+          {selectedNetworks.length > 0 && (
+            <button
+              onClick={() => {
+                setSelectedNetworks([]);
+                setIsNetworkSelectorExpanded(false);
+              }}
+              className="flex items-center space-x-1 text-sm text-muted hover:text-text transition-colors duration-200"
+              type="button"
+            >
+              <span>Reset filter</span>
+              <ResetIcon className="w-4 h-4" />
+            </button>
+          )}
+        </div>
         {isNetworkSelectorExpanded && (
           <div className="mt-2 flex flex-wrap gap-2">
             {networks.map((network) => (
