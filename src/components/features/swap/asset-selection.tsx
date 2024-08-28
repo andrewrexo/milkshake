@@ -7,6 +7,7 @@ import type { Network } from "../../../store/useAppStore";
 import NetworkIcon from "../../icons/network";
 import TokenIcon from "../../icons/token";
 import Modal from "../../ui/modal";
+import ScrollArea from "../../ui/scroll-area";
 
 export interface Asset {
   id: string;
@@ -84,40 +85,37 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
         )}
       </div>
 
-      <div
-        className={twMerge(
-          "grid grid-cols-1 overflow-y-auto max-h-[calc(100%-80px)]",
-          isNetworkSelectorExpanded ? "max-h-[260px]" : "",
-        )}
-      >
-        {filteredAssets.map((asset) => (
-          <button
-            key={asset.id}
-            onClick={() => onSelect(asset)}
-            className="w-full flex items-center justify-between py-3 hover:px-2 transition-all duration-200"
-            type="button"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <TokenIcon iconName={asset.id} className="w-8 h-8" />
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-surface flex items-center justify-center">
-                  <NetworkIcon iconName={asset.network.id} className="w-3 h-3" />
+      <ScrollArea className={twMerge("h-[330px]", isNetworkSelectorExpanded && "h-[259px]")} viewportClassName="h-full">
+        <div className="grid grid-cols-1">
+          {filteredAssets.map((asset) => (
+            <button
+              key={asset.id}
+              onClick={() => onSelect(asset)}
+              className="w-full flex items-center justify-between py-3 hover:px-2 transition-all duration-200"
+              type="button"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <TokenIcon iconName={asset.id} className="w-8 h-8" />
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-surface flex items-center justify-center">
+                    <NetworkIcon iconName={asset.network.id} className="w-3 h-3" />
+                  </div>
+                </div>
+                <div className="text-left">
+                  <p className="font-medium">{asset.name}</p>
+                  <p className="text-sm text-muted">
+                    {asset.symbol}
+                    <span className="ml-1 text-xs text-muted">on {asset.network.name}</span>
+                  </p>
                 </div>
               </div>
-              <div className="text-left">
-                <p className="font-medium">{asset.name}</p>
-                <p className="text-sm text-muted">
-                  {asset.symbol}
-                  <span className="ml-1 text-xs text-muted">on {asset.network.name}</span>
-                </p>
+              <div className="flex items-center space-x-2">
+                <p className="font-medium">{asset.balance}</p>
               </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <p className="font-medium">{asset.balance}</p>
-            </div>
-          </button>
-        ))}
-      </div>
+            </button>
+          ))}
+        </div>
+      </ScrollArea>
     </Modal>
   );
 };
