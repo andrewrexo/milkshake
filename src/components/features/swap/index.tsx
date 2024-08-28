@@ -96,11 +96,11 @@ const Swap = () => {
         <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background")}>
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium">From</span>
-            <span className="text-sm text-muted font-medium flex gap-2 items-center">
+            <span className="text-sm text-muted font-medium flex gap-1.5 items-center">
               {isNetworkConnected(fromNetwork?.name) ? (
                 <>
                   <p>{fromNetwork?.name}</p>
-                  <span className="bg-primary rounded-full p-0.5">
+                  <span className="bg-primary rounded-full p-0.5 mb-0.5">
                     <div className="group relative">
                       <CheckIcon className="w-3 h-3 text-white" />
                       <span className="absolute left-1/2 -translate-x-1/2 -top-8 bg-background text-text text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -161,13 +161,13 @@ const Swap = () => {
         <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background")}>
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium">To</span>
-            <span className="text-sm text-muted font-medium flex gap-2">
+            <span className="text-sm text-muted font-medium flex gap-1.5">
               {isNetworkConnected(toNetwork?.name) ? (
                 <>
                   <p>{toNetwork?.name}</p>
 
                   <span className="flex items-center">
-                    <div className="group relative bg-primary rounded-full p-0.5">
+                    <div className="group relative bg-primary rounded-full p-0.5 mb-0.5">
                       <CheckIcon className="w-3 h-3 text-white" />
                       <span className="absolute left-1/2 -translate-x-1/2 -top-8 bg-background text-text text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         Connected

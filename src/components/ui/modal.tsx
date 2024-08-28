@@ -32,7 +32,7 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, title, children }) =>
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
       }`}
     >
-      <div className="flex justify-between items-center p-4 border-b border-border">
+      <div className="flex justify-between items-center py-4 px-2 border-b border-border">
         <h2 className="text-xl font-bold">{title}</h2>
         <button type="button" onClick={onClose} className="p-1 rounded-full hover:bg-input">
           <Cross2Icon className="w-5 h-5" />
