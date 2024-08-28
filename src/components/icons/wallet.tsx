@@ -14,7 +14,7 @@ interface WalletIconProps extends React.SVGProps<SVGSVGElement> {
   iconName: string;
 }
 
-const walletIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
+export const walletIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   metamask: MetamaskSVG,
   coinbase: CoinbaseSVG,
   coinbaseWalletSDK: CoinbaseSVG,
@@ -30,7 +30,7 @@ const WalletIcon: React.FC<WalletIconProps> = ({ iconName, ...props }) => {
     return <CubeIcon className="w-6 h-6" />;
   }
 
-  return <IconComponent {...props} />;
+  return <IconComponent {...props} className="w-6 h-6" />;
 };
 
 export default WalletIcon;

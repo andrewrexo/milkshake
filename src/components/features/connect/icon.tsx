@@ -1,8 +1,11 @@
 import type { Connector } from "wagmi";
 import NetworkIcon from "../../icons/network";
-import WalletIcon from "../../icons/wallet";
+import WalletIcon, { walletIcons } from "../../icons/wallet";
 
-const Icon = ({ connector }: { connector: Connector | { name: string; icon?: string } }) => {
+const Icon = ({
+  connector,
+  ...props
+}: { connector: Connector | { name: string; icon?: string }; className?: string }) => {
   const icon = connector.icon;
 
   if (icon) {
@@ -10,10 +13,14 @@ const Icon = ({ connector }: { connector: Connector | { name: string; icon?: str
   }
 
   if (connector.name === "Solana") {
-    return <NetworkIcon iconName="solana" />;
+    return <NetworkIcon iconName="solana" {...props} />;
   }
 
-  return <WalletIcon iconName={connector.name} />;
+  if (connector.name && connector.name.toLowerCase() in walletIcons) {
+    return <WalletIcon iconName={connector.name.toLowerCase()} {...props} />;
+  }
+
+  return <WalletIcon iconName={connector.name} {...props} />;
 };
 
 export default Icon;
