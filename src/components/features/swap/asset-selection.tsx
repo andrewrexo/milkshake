@@ -1,11 +1,14 @@
-import { CaretDownIcon, CaretUpIcon, MagnifyingGlassIcon, ResetIcon } from "@radix-ui/react-icons";
+import { CaretDownIcon, CaretUpIcon, CubeIcon, MagnifyingGlassIcon, ResetIcon } from "@radix-ui/react-icons";
+import { getChainId } from "@wagmi/core";
 import type React from "react";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { useEVMTokenBalances, useSolanaTokenBalances } from "../../../hooks/useTokenBalances";
 import { mockAssets } from "../../../lib/mock";
 import type { Network } from "../../../store/useAppStore";
+import { config } from "../../../wagmi";
 import NetworkIcon from "../../icons/network";
-import TokenIcon from "../../icons/token";
+import TokenIcon, { tokenIcons } from "../../icons/token";
 import Modal from "../../ui/modal";
 import ScrollArea from "../../ui/scroll-area";
 
@@ -15,6 +18,8 @@ export interface Asset {
   symbol: string;
   network: Network;
   balance?: string;
+  decimals?: number;
+  logo?: string;
 }
 
 const networks = ["ethereum", "arbitrum", "polygon", "solana", "bsc"];
@@ -32,16 +37,41 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
   const [isNetworkSelectorExpanded, setIsNetworkSelectorExpanded] = useState(false);
 
+  const chainId = getChainId(config);
+  const { data: evmTokens } = useEVMTokenBalances(chainId);
+  const { data: solanaTokens } = useSolanaTokenBalances();
+
+  const allTokenBalances = useMemo(() => {
+    return [...(evmTokens ?? []), ...(solanaTokens ?? [])];
+  }, [evmTokens, solanaTokens]);
+
   const filteredAssets = useMemo(() => {
     const trimmedSearchTerm = searchTerm.trim().toLowerCase();
-    return mockAssets.filter(
+    const filtered = mockAssets.filter(
       (asset) =>
         (selectedNetworks.length === 0 || selectedNetworks.includes(asset.network.id)) &&
         (asset.name.toLowerCase().includes(trimmedSearchTerm) ||
           asset.symbol.toLowerCase().includes(trimmedSearchTerm) ||
           asset.network.name.toLowerCase().includes(trimmedSearchTerm)),
     );
-  }, [searchTerm, selectedNetworks]);
+
+    // Add balance information to filtered assets
+    return filtered.map((asset) => {
+      const isEvm = (address: string) => address.includes("0x");
+
+      const balanceInfo = allTokenBalances.find(
+        (token) =>
+          token.symbol?.toLowerCase() === asset.id.toLowerCase() &&
+          (asset.network.id === "solana" ? !isEvm(token.token) : !isEvm(token.token)),
+      );
+      return {
+        ...asset,
+        balance: balanceInfo?.balance,
+        decimals: balanceInfo?.decimals,
+        logo: balanceInfo?.logo,
+      };
+    });
+  }, [searchTerm, selectedNetworks, allTokenBalances]);
 
   const sortedAssets = useMemo(() => {
     return filteredAssets.sort((a, b) => {
@@ -49,6 +79,8 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
       const isBExcluded = excludeAsset && b.id === excludeAsset.id && b.network.id === excludeAsset.network.id;
       if (isAExcluded && !isBExcluded) return -1;
       if (!isAExcluded && isBExcluded) return 1;
+      if (a.balance && !b.balance) return -1;
+      if (!a.balance && b.balance) return 1;
       return 0;
     });
   }, [filteredAssets, excludeAsset]);
@@ -139,7 +171,13 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
               >
                 <div className="flex items-center space-x-3">
                   <div className="relative">
-                    <TokenIcon iconName={asset.id} className="w-8 h-8" />
+                    {asset.id in tokenIcons ? (
+                      <TokenIcon iconName={asset.id} className="w-8 h-8" />
+                    ) : asset.logo ? (
+                      <img src={asset.logo} alt={asset.name} className="w-8 h-8 rounded-full" />
+                    ) : (
+                      <CubeIcon className="w-8 h-8" />
+                    )}
                     <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-surface flex items-center justify-center">
                       <NetworkIcon iconName={asset.network.id} className="w-3 h-3" />
                     </div>
@@ -154,8 +192,11 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
                 </div>
                 <div className="flex items-center space-x-2">
                   {isExcluded && <span className="text-sm text-muted mt-0.5">Used</span>}
-
-                  <p className="font-medium">{asset.balance}</p>
+                  {asset.balance && (
+                    <p className="font-medium">
+                      {asset.decimals ? (Number(asset.balance) / 10 ** asset.decimals).toFixed(4) : asset.balance}
+                    </p>
+                  )}
                 </div>
               </button>
             );

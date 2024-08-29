@@ -14,7 +14,7 @@ interface TokenIconProps extends React.SVGProps<SVGSVGElement> {
   iconName: string;
 }
 
-const tokenIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
+export const tokenIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   usdc: USDCSVG,
   arb: ARBSVG,
   usdt: USDT,
