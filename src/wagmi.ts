@@ -6,14 +6,12 @@ import { injected, safe, metaMask } from "wagmi/connectors";
 
 export const config = createConfig({
   chains: [mainnet, arbitrum, base, optimism],
-  multiInjectedProviderDiscovery: true,
+  multiInjectedProviderDiscovery: false,
   connectors: [
     injected({
       unstable_shimAsyncInject: 2_000,
     }),
-    metaMask({
-      // injectProvider: true,
-    }),
+    metaMask(),
     safe(),
   ],
   transports: {

@@ -24,12 +24,7 @@ const SolanaConnector = ({ isConnected, onConnect, wallet }: SolanaConnectorProp
 
   return (
     <div className="flex gap-2 w-full">
-      <ConnectorButton
-        connector={connector as Connector}
-        isConnected={isConnected}
-        onConnect={onConnect}
-        network="SOL"
-      />
+      <ConnectorButton isConnected={isConnected} onConnect={onConnect} network="Solana" badge="SOL" />
       {isConnected && (
         <button type="button" onClick={disconnect} className="mr-2">
           <Cross1Icon />

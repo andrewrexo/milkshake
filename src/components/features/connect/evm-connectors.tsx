@@ -1,5 +1,4 @@
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
-import { useLocalStorage } from "@solana/wallet-adapter-react";
 import { twMerge } from "tailwind-merge";
 import type { Connector } from "wagmi";
 import { useConnect, useDisconnect } from "wagmi";
@@ -16,13 +15,35 @@ export const ConnectorButton = ({
   connector,
   isConnected,
   onConnect,
+  onDisconnect,
   network,
-}: { connector: Connector; isConnected: boolean; onConnect: (connector: Connector) => void; network: string }) => {
+  badge,
+}: {
+  connector?: Connector;
+  isConnected: boolean;
+  onConnect: (connector: Connector) => void;
+  onDisconnect?: () => void;
+  network: string;
+  badge?: string;
+}) => {
+  let connectorDupe: Partial<Connector | undefined> = connector;
+
+  if (!connectorDupe) {
+    connectorDupe = {
+      name: `${network} Network${network === "EVM" ? "s" : ""}`,
+      uid: network.toLowerCase(),
+      adapter: {
+        name: `${network} Network`,
+        disconnect: () => onDisconnect,
+      },
+    };
+  }
+
   return (
     <button
-      key={connector.uid}
+      key={connectorDupe.uid}
       type="button"
-      onClick={() => onConnect(connector)}
+      onClick={() => (onDisconnect ? onDisconnect() : onConnect(connectorDupe as Connector))}
       className={twMerge(
         "btn-primary text-md py-4 flex items-center gap-2 w-full",
         isConnected && "opacity-50 cursor-not-allowed",
@@ -31,51 +52,51 @@ export const ConnectorButton = ({
       disabled={isConnected}
     >
       <div className="flex items-center gap-2 font-medium">
-        <Icon connector={connector} className="w-6 h-6" />
-        <div className="flex items-center gap-1">{connector.name}</div>
+        <span className="w-8 h-8 bg-background rounded-full flex items-center justify-center p-1">
+          <Icon connector={connectorDupe as Connector} className="w-8 h-8" />
+        </span>
+        <div className="flex items-center gap-1">{connectorDupe.name}</div>
       </div>
       {isConnected && <CheckIcon className="w-6 h-6 ml-auto" />}
-      <Badge className={twMerge(isConnected ? "" : "ml-auto")}>{network}</Badge>
+      <Badge className={twMerge(isConnected ? "" : "ml-auto")}>{badge ?? network}</Badge>
     </button>
   );
 };
 
-const EVMConnectors = ({ isConnected, onConnect, evmConnector }: EVMConnectorsProps) => {
+const EVMConnectors = ({ isConnected, onConnect }: EVMConnectorsProps) => {
   const { connectors } = useConnect();
   const { disconnect } = useDisconnect();
-  const [walletName] = useLocalStorage("walletName", "EVM");
 
-  const uniqueConnectors = connectors.filter(
-    (connector, index, self) =>
-      index === self.findIndex((t) => t.name === connector.name && connector.name !== walletName),
+  return isConnected ? (
+    <div className="flex gap-2 w-full">
+      <ConnectorButton
+        key={"evm-wallet"}
+        isConnected={isConnected}
+        onConnect={onConnect}
+        onDisconnect={disconnect}
+        network="EVM"
+      />
+      <button
+        type="button"
+        onClick={() => {
+          disconnect();
+        }}
+        className="mr-2"
+      >
+        <Cross1Icon />
+      </button>
+    </div>
+  ) : (
+    connectors.map((connector: Connector) => (
+      <ConnectorButton
+        key={connector.name}
+        connector={connector}
+        isConnected={isConnected}
+        onConnect={onConnect}
+        network="EVM"
+      />
+    ))
   );
-
-  if (isConnected && evmConnector) {
-    return (
-      <div className="flex gap-2 w-full">
-        <ConnectorButton
-          // biome-ignore lint/style/noNonNullAssertion: connectors always contain the evmConnector
-          connector={connectors.find((connector) => connector.name === evmConnector)!}
-          isConnected={isConnected}
-          onConnect={onConnect}
-          network="EVM"
-        />
-        <button type="button" onClick={() => disconnect()} className="mr-2">
-          <Cross1Icon />
-        </button>
-      </div>
-    );
-  }
-
-  return uniqueConnectors.map((connector: Connector) => (
-    <ConnectorButton
-      key={connector.name}
-      connector={connector}
-      isConnected={isConnected}
-      onConnect={onConnect}
-      network="EVM"
-    />
-  ));
 };
 
 export default EVMConnectors;

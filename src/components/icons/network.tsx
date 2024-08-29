@@ -19,6 +19,8 @@ const networkIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   arbitrum: ArbitrumSVG,
   base: BaseSVG,
   solana: SolanaSVG,
+  sol: SolanaSVG,
+  evm: EthereumSVG,
   bsc: BscSVG,
   polygon: PolygonSVG,
 };
