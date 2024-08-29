@@ -14,22 +14,28 @@ const StartButton = ({ isEVMConnected, isSolanaConnected, onClick }: StartButton
     type="button"
     className="w-full btn-primary bg-background text-md py-4 border-none hover-input flex gap-4 items-center rounded-xl text-primary"
   >
-    <p className="font-medium transition-all duration-300 flex gap-2 items-center">
+    <p className="font-medium transition-all duration-300 flex gap-2 items-center min-h-8">
       Start swapping <ArrowRightIcon className="w-4 h-4 mt-0.5" />
     </p>
     <div className="flex gap-1 ml-auto">
       <div
-        className={twMerge("relative transition-opacity duration-300", isSolanaConnected ? "opacity-100" : "opacity-0")}
-      >
-        <span className="flex items-center justify-center bg-surface rounded-full">
-          <NetworkIcon iconName="solana" className="m-1 z-10" />
-        </span>
-      </div>
-      <div
-        className={twMerge("relative transition-opacity duration-300", isEVMConnected ? "opacity-100" : "opacity-0")}
+        className={twMerge(
+          "relative transition-opacity duration-300",
+          isEVMConnected ? "opacity-100" : "opacity-0 hidden",
+        )}
       >
         <span className="flex items-center justify-center bg-surface rounded-full">
           <NetworkIcon iconName="ethereum" className="m-1 z-10" />
+        </span>
+      </div>
+      <div
+        className={twMerge(
+          "relative transition-opacity duration-200",
+          isSolanaConnected ? "opacity-100" : "opacity-0 hidden",
+        )}
+      >
+        <span className="flex items-center justify-center bg-surface rounded-full">
+          <NetworkIcon iconName="solana" className="m-1 z-10" />
         </span>
       </div>
     </div>
