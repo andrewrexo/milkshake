@@ -7,12 +7,14 @@ import { useAppStore } from "../../../store/useAppStore";
 import { useTheme } from "../../../themes/context";
 import TokenIcon from "../../icons/token";
 import AssetSelection, { type Asset } from "./asset-selection";
+import NetworkIcon from "../../icons/network";
 
 const Swap = () => {
   const { mode } = useTheme();
   const [selectingFor, setSelectingFor] = useState<"from" | "to">("from");
   const { setCurrentPage } = useAppStore();
-  const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana } = useWalletConnections();
+  const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana, evmAddress, solanaAddress } =
+    useWalletConnections();
   const { connectors } = useConnect();
 
   const { toToken, fromToken, setToToken, setFromToken, toNetwork, fromNetwork, setShowModal, showModal } = useAppStore(
@@ -93,20 +95,26 @@ const Swap = () => {
         </div>
       </div>
       <div className="flex flex-col space-y-2 mb-4">
-        <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background")}>
+        <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background/50")}>
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium">From</span>
-            <span className="text-sm text-muted font-medium flex gap-1.5 items-center">
+            <span className="text-sm text-muted font-medium flex gap-1.5 items-center min-h-6">
               {isNetworkConnected(fromNetwork?.name) ? (
                 <>
-                  <p>{fromNetwork?.name}</p>
-                  <span className="bg-surface rounded-full p-0.5 mb-0.5">
-                    <div className="group relative">
-                      <CheckIcon className="w-3 h-3 text-primary" />
-                      <span className="absolute left-1/2 -translate-x-1/2 -top-8 bg-background text-text text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        Connected
-                      </span>
-                    </div>
+                  <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1">
+                    <NetworkIcon iconName={fromNetwork?.id} className="w-4 h-4" />
+
+                    <p>{fromNetwork?.name}:</p>
+                    {fromNetwork?.name === "Solana" ? (
+                      <p>
+                        {solanaAddress?.toBase58().slice(0, 4)}...{solanaAddress?.toBase58().slice(-4)}
+                      </p>
+                    ) : (
+                      <p>
+                        {evmAddress?.slice(0, 6)}...{evmAddress?.slice(-4)}
+                      </p>
+                    )}
+                    <CheckIcon className="w-4 h-4 text-primary" />
                   </span>
                 </>
               ) : (
@@ -158,21 +166,25 @@ const Swap = () => {
           </button>
         </div>
 
-        <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background")}>
+        <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background/30")}>
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm font-medium">To</span>
-            <span className="text-sm text-muted font-medium flex gap-1.5">
+            <span className="text-sm font-medium flex gap-1 items-center">To</span>
+            <span className="text-sm text-muted font-medium flex gap-1.5 items-center min-h-6">
               {isNetworkConnected(toNetwork?.name) ? (
                 <>
-                  <p>{toNetwork?.name}</p>
-
-                  <span className="flex items-center">
-                    <div className="group relative bg-surface rounded-full p-0.5 mb-0.5">
-                      <CheckIcon className="w-3 h-3 text-primary" />
-                      <span className="absolute left-1/2 -translate-x-1/2 -top-8 bg-background text-text text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        Connected
-                      </span>
-                    </div>
+                  <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1">
+                    <NetworkIcon iconName={toNetwork?.id} className="w-4 h-4" />
+                    <p>{toNetwork?.name}</p>
+                    {toNetwork?.name === "Solana" ? (
+                      <p>
+                        {solanaAddress?.toBase58().slice(0, 4)}...{solanaAddress?.toBase58().slice(-4)}
+                      </p>
+                    ) : (
+                      <p>
+                        {evmAddress?.slice(0, 6)}...{evmAddress?.slice(-4)}
+                      </p>
+                    )}
+                    <CheckIcon className="w-4 h-4 text-primary" />
                   </span>
                 </>
               ) : (
@@ -233,7 +245,7 @@ const Swap = () => {
       </div>
       <button
         type="button"
-        className="w-full btn-primary bg-background text-md py-5 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-5 sm:mb-0 mt-auto sm:mt-0"
+        className="w-full btn-primary bg-background text-md py-5 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-5 sm:mb-0 mt-auto sm:mt-4"
       >
         <p className="font-medium transition-all duration-300 flex gap-2 items-center">Create transfer</p>
         <ArrowTopRightIcon className="w-5 h-5 ml-auto" />
