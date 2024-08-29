@@ -3,13 +3,18 @@ import { type ThemeName, themes } from "../../themes";
 import { useTheme } from "../../themes/context";
 
 const ThemeSelect = () => {
-  const { theme, setTheme } = useTheme();
+  const { setTheme, setMode, mode } = useTheme();
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.target instanceof HTMLInputElement) {
         return; // Do not change theme if the event target is an input element
       }
+
+      if (event.key === "d") {
+        setMode(mode === "dark" ? "light" : "dark");
+      }
+
       const themeNames = Object.keys(themes) as ThemeName[];
       const index = Number.parseInt(event.key) - 1;
       if (index >= 0 && index < themeNames.length) {
@@ -21,7 +26,7 @@ const ThemeSelect = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [setTheme]);
+  }, [setTheme, setMode, mode]);
 
   return <></>;
 };

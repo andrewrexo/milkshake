@@ -2,6 +2,7 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import { useLocalStorage, useWallet } from "@solana/wallet-adapter-react";
 import { twMerge } from "tailwind-merge";
 import Icon from "./icon";
+import { useTheme } from "../../../themes/context";
 
 type SolanaConnectorProps = {
   isConnected: boolean;
@@ -11,6 +12,7 @@ type SolanaConnectorProps = {
 const SolanaConnector = ({ isConnected, onConnect }: SolanaConnectorProps) => {
   const { wallet } = useWallet();
   const [walletName] = useLocalStorage<string>("walletName", wallet?.adapter?.name ?? "");
+  const { mode } = useTheme();
 
   return (
     <button
@@ -28,7 +30,13 @@ const SolanaConnector = ({ isConnected, onConnect }: SolanaConnectorProps) => {
         <div className="flex items-center gap-1">{walletName ? `${wallet?.adapter.name ?? "Solana"}` : "Solana"}</div>
       </div>
       {isConnected && <CheckIcon className="w-6 h-6 ml-auto" />}
-      <span className={twMerge("bg-secondary px-2 py-1 rounded-full text-xs text-input", !isConnected && "ml-auto")}>
+      <span
+        className={twMerge(
+          "bg-primary px-2 py-1 rounded-full text-xs text-text font-bold",
+          isConnected ? "" : "ml-auto",
+          mode === "dark" ? "text-input" : "text-input",
+        )}
+      >
         SOL
       </span>
     </button>

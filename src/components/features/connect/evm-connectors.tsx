@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import type { Connector } from "wagmi";
 import { useConnect } from "wagmi";
 import Icon from "./icon";
+import { useTheme } from "../../../themes/context";
 
 type EVMConnectorsProps = {
   isConnected: boolean;
@@ -11,6 +12,7 @@ type EVMConnectorsProps = {
 
 const EVMConnectors = ({ isConnected, onConnect }: EVMConnectorsProps) => {
   const { connectors } = useConnect();
+  const { mode } = useTheme();
 
   const uniqueConnectors = connectors.filter(
     (connector, index, self) => index === self.findIndex((t) => t.name === connector.name),
@@ -36,7 +38,11 @@ const EVMConnectors = ({ isConnected, onConnect }: EVMConnectorsProps) => {
           </div>
           {isConnected && <CheckIcon className="w-6 h-6 ml-auto" />}
           <span
-            className={twMerge("bg-secondary px-2 py-1 rounded-full text-xs text-input", isConnected ? "" : "ml-auto")}
+            className={twMerge(
+              "bg-secondary px-2 py-1 rounded-full text-xs text-text font-bold",
+              isConnected ? "" : "ml-auto",
+              mode === "dark" ? "text-input" : "text-input",
+            )}
           >
             EVM
           </span>
