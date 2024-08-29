@@ -119,8 +119,8 @@ const Swap = () => {
             <input type="number" placeholder="0" className="text-2xl font-bold bg-transparent outline-none w-1/2" />
             <button
               className={twMerge(
-                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover",
-                mode === "dark" && "bg-surface/80 hover:bg-surface",
+                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover active:bg-hover transition-colors duration-300",
+                mode === "dark" && "bg-surface/80 hover:bg-surface active:bg-surface",
               )}
               type="button"
               onClick={() => {
@@ -183,8 +183,8 @@ const Swap = () => {
             />
             <button
               className={twMerge(
-                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover",
-                mode === "dark" && "bg-surface/80 hover:bg-surface",
+                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover active:bg-hover transition-colors duration-300",
+                mode === "dark" && "bg-surface/80 hover:bg-surface active:bg-surface",
               )}
               type="button"
               onClick={() => {
