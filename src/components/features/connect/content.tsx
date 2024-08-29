@@ -56,7 +56,7 @@ const ConnectContent = () => {
         <div className="text-center pb-8 text-muted">No networks found matching your search.</div>
       )}
       {anyNetworkFound && <Divider />}
-      <div className="mt-auto sm:mt-0">
+      <div className="mt-auto sm:mt-0 mb-4">
         <StartButton
           isEVMConnected={isEVMConnected}
           isSolanaConnected={isSolanaConnected}
@@ -68,7 +68,7 @@ const ConnectContent = () => {
 };
 
 const Divider = () => (
-  <div className="mt-4 pb-4 flex items-center opacity-0 sm:opacity-100">
+  <div className="mt-4 pb-4 items-center hidden sm:flex">
     <div className="flex-grow border-t border-muted" />
     <span className="mx-4 text-sm text-muted">or</span>
     <div className="flex-grow border-t border-muted" />

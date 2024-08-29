@@ -2,7 +2,7 @@ import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { clusterApiUrl } from "@solana/web3.js";
 import { http, createConfig } from "wagmi";
 import { arbitrum, base, mainnet, optimism } from "wagmi/chains";
-import { injected, metaMask, safe } from "wagmi/connectors";
+import { injected, safe, metaMask } from "wagmi/connectors";
 
 export const config = createConfig({
   chains: [mainnet, arbitrum, base, optimism],
@@ -12,7 +12,7 @@ export const config = createConfig({
       unstable_shimAsyncInject: 2_000,
     }),
     metaMask({
-      injectProvider: true,
+      // injectProvider: true,
     }),
     safe(),
   ],

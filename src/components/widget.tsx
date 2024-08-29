@@ -63,7 +63,7 @@ const Widget = () => {
             </div>
             <p
               className={twMerge(
-                "text-center text-xs text-muted z-0 transition-opacity duration-300 select-none pointer-events-none",
+                "text-center text-xs text-muted z-0 transition-opacity duration-300 select-none pointer-events-none mt-auto",
                 showModal ? "opacity-0" : "opacity-100",
               )}
             >

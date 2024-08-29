@@ -12,7 +12,7 @@ const StartButton = ({ isEVMConnected, isSolanaConnected, onClick }: StartButton
   <button
     onClick={onClick}
     type="button"
-    className="w-full btn-primary bg-background text-md py-4 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-4 "
+    className="w-full btn-primary bg-background text-md py-4 border-none hover-input flex gap-4 items-center rounded-xl text-primary"
   >
     <p className="font-medium transition-all duration-300 flex gap-2 items-center">
       Start swapping <ArrowRightIcon className="w-4 h-4 mt-0.5" />
