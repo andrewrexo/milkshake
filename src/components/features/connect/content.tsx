@@ -9,8 +9,7 @@ import StartButton from "./start-button";
 
 const ConnectContent = () => {
   const { setCurrentPage } = useAppStore();
-  const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana, evmConnector, solanaWallet } =
-    useWalletConnections();
+  const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana, evmConnector } = useWalletConnections();
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleStartSwapping = useCallback(() => {
@@ -29,8 +28,8 @@ const ConnectContent = () => {
   );
 
   const memoizedSolanaConnector = useMemo(
-    () => <SolanaConnector isConnected={isSolanaConnected} onConnect={connectSolana} wallet={solanaWallet} />,
-    [isSolanaConnected, connectSolana, solanaWallet],
+    () => <SolanaConnector isConnected={isSolanaConnected} onConnect={connectSolana} />,
+    [isSolanaConnected, connectSolana],
   );
 
   return (

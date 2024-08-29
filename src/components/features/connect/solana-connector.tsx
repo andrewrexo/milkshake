@@ -1,26 +1,14 @@
 import { Cross1Icon } from "@radix-ui/react-icons";
-import { type Wallet, useLocalStorage, useWallet } from "@solana/wallet-adapter-react";
-import type { Connector } from "@wagmi/core";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { ConnectorButton } from "./evm-connectors";
 
 type SolanaConnectorProps = {
   isConnected: boolean;
   onConnect: () => void;
-  wallet: Wallet | null;
 };
 
-const SolanaConnector = ({ isConnected, onConnect, wallet }: SolanaConnectorProps) => {
-  const [walletName] = useLocalStorage<string>("walletName", wallet?.adapter?.name ?? "Solana");
+const SolanaConnector = ({ isConnected, onConnect }: SolanaConnectorProps) => {
   const { disconnect } = useWallet();
-
-  const connector: Partial<Connector> = {
-    name: walletName,
-    uid: "solana",
-    adapter: {
-      name: walletName,
-      connect: () => onConnect(),
-    },
-  };
 
   return (
     <div className="flex gap-2 w-full">

@@ -13,8 +13,7 @@ const Swap = () => {
   const { mode } = useTheme();
   const [selectingFor, setSelectingFor] = useState<"from" | "to">("from");
   const { setCurrentPage } = useAppStore();
-  const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana, evmAddress, solanaAddress } =
-    useWalletConnections();
+  const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana } = useWalletConnections();
   const { connectors } = useConnect();
 
   const { toToken, fromToken, setToToken, setFromToken, toNetwork, fromNetwork, setShowModal, showModal } = useAppStore(
@@ -100,23 +99,11 @@ const Swap = () => {
             <span className="text-sm font-medium">From</span>
             <span className="text-sm text-muted font-medium flex gap-1.5 items-center min-h-6">
               {isNetworkConnected(fromNetwork?.name) ? (
-                <>
-                  <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1">
-                    <NetworkIcon iconName={fromNetwork?.id} className="w-4 h-4" />
-
-                    <p>{fromNetwork?.name}:</p>
-                    {fromNetwork?.name === "Solana" ? (
-                      <p>
-                        {solanaAddress?.toBase58().slice(0, 4)}...{solanaAddress?.toBase58().slice(-4)}
-                      </p>
-                    ) : (
-                      <p>
-                        {evmAddress?.slice(0, 6)}...{evmAddress?.slice(-4)}
-                      </p>
-                    )}
-                    <CheckIcon className="w-4 h-4 text-primary" />
-                  </span>
-                </>
+                <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1">
+                  <NetworkIcon iconName={fromNetwork?.id} className="w-4 h-4" />
+                  <p>{fromNetwork?.name}</p>
+                  <CheckIcon className="w-4 h-4 text-primary" />
+                </span>
               ) : (
                 <button
                   type="button"
@@ -171,22 +158,11 @@ const Swap = () => {
             <span className="text-sm font-medium flex gap-1 items-center">To</span>
             <span className="text-sm text-muted font-medium flex gap-1.5 items-center min-h-6">
               {isNetworkConnected(toNetwork?.name) ? (
-                <>
-                  <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1">
-                    <NetworkIcon iconName={toNetwork?.id} className="w-4 h-4" />
-                    <p>{toNetwork?.name}</p>
-                    {toNetwork?.name === "Solana" ? (
-                      <p>
-                        {solanaAddress?.toBase58().slice(0, 4)}...{solanaAddress?.toBase58().slice(-4)}
-                      </p>
-                    ) : (
-                      <p>
-                        {evmAddress?.slice(0, 6)}...{evmAddress?.slice(-4)}
-                      </p>
-                    )}
-                    <CheckIcon className="w-4 h-4 text-primary" />
-                  </span>
-                </>
+                <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1">
+                  <NetworkIcon iconName={toNetwork?.id} className="w-4 h-4" />
+                  <p>{toNetwork?.name}</p>
+                  <CheckIcon className="w-4 h-4 text-primary" />
+                </span>
               ) : (
                 <button
                   type="button"
@@ -230,7 +206,7 @@ const Swap = () => {
             </button>
           </div>
         </div>
-        <div className="flex flex-col gap-2 pt-2">
+        <div className="flex flex-col gap-2 pt-6">
           <div className="flex justify-between">
             <p className="text-sm font-medium">Network route</p>
             <p className="text-sm font-medium text-muted">
@@ -245,7 +221,7 @@ const Swap = () => {
       </div>
       <button
         type="button"
-        className="w-full btn-primary bg-background text-md py-5 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-5 sm:mb-0 mt-auto sm:mt-4"
+        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-5 sm:mb-0 mt-auto sm:mt-4"
       >
         <p className="font-medium transition-all duration-300 flex gap-2 items-center">Create transfer</p>
         <ArrowTopRightIcon className="w-5 h-5 ml-auto" />

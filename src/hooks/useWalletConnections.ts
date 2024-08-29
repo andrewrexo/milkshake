@@ -6,12 +6,7 @@ import { type Connector, useAccount, useConnect } from "wagmi";
 export const useWalletConnections = () => {
   const { connect } = useConnect();
   const { isConnected: isEVMConnected, connector: evmConnector, address: evmAddress } = useAccount();
-  const {
-    connected: isSolanaConnected,
-    connecting: connectingSolana,
-    wallet: solanaWallet,
-    publicKey: solanaAddress,
-  } = useWallet();
+  const { connected: isSolanaConnected, connecting: connectingSolana, publicKey: solanaAddress } = useWallet();
   const { setVisible: setSolanaModalVisible } = useWalletModal();
 
   const connectEVM = useCallback(
@@ -33,7 +28,6 @@ export const useWalletConnections = () => {
     connectingSolana,
     evmConnector,
     evmAddress,
-    solanaWallet,
     solanaAddress,
     connectEVM,
     connectSolana,
