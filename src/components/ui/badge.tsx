@@ -3,7 +3,6 @@ import { useTheme } from "../../themes/context";
 
 export const Badge = ({ children, className }: { children: React.ReactNode; className?: string }) => {
   const { mode } = useTheme();
-  console.log(mode);
   return (
     <span
       className={twMerge(
