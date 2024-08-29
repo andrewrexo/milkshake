@@ -152,7 +152,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
       </div>
 
       <ScrollArea
-        className={twMerge("px-1 h-[330px]", isNetworkSelectorExpanded && "h-[259px]")}
+        className={twMerge("px-1 sm:h-[330px]", isNetworkSelectorExpanded && "sm:h-[259px]")}
         viewportClassName="h-full"
       >
         <div className="grid grid-cols-1">
