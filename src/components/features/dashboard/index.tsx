@@ -2,6 +2,7 @@ import { HamburgerMenuIcon, LoopIcon, ShuffleIcon } from "@radix-ui/react-icons"
 import { useDisconnect } from "wagmi";
 import { useAppStore } from "../../../store/useAppStore";
 import NetworkIcon from "../../icons/network";
+import { Assets } from "./assets";
 
 const Dashboard = () => {
   const { disconnect } = useDisconnect();
@@ -78,8 +79,7 @@ const Dashboard = () => {
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-sm font-medium">My balances</h3>
       </div>
-
-      <div className="bg-input rounded-lg p-4 mb-4 flex flex-col items-center justify-center text-center" />
+      <Assets />
     </div>
   );
 };
