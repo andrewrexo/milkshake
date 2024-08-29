@@ -121,7 +121,7 @@ const Swap = () => {
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <input type="text" placeholder="0" className="text-2xl font-bold bg-transparent outline-none w-1/2" />
+            <input type="number" placeholder="0" className="text-2xl font-bold bg-transparent outline-none w-1/2" />
             <button
               className={twMerge(
                 "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover",
@@ -188,7 +188,7 @@ const Swap = () => {
           </div>
           <div className="flex items-center justify-between">
             <input
-              type="text"
+              type="number"
               placeholder="0"
               className="text-2xl font-bold bg-transparent outline-none w-1/2"
               readOnly
