@@ -4,7 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { WagmiProvider } from "wagmi";
 
-import App from "./app.tsx";
+import App from "./App.tsx";
 import { config } from "./wagmi.ts";
 
 import "./styles/index.css";
