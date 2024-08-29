@@ -82,7 +82,7 @@ const Swap = () => {
   return (
     <div className="flex flex-col h-full pb-4 relative">
       <div className="flex items-center justify-between mb-4">
-        <button type="button" onClick={() => setCurrentPage("connect")} className="text-2xl font-bold">
+        <button type="button" onClick={() => setCurrentPage("dashboard")} className="text-2xl font-bold">
           ←
         </button>
         <h2 className="text-xl font-bold">Transfer</h2>
