@@ -1,45 +1,41 @@
-import { CheckIcon } from "@radix-ui/react-icons";
-import { useLocalStorage, useWallet } from "@solana/wallet-adapter-react";
-import { twMerge } from "tailwind-merge";
-import Icon from "./icon";
-import { useTheme } from "../../../themes/context";
+import { Cross1Icon } from "@radix-ui/react-icons";
+import { type Wallet, useLocalStorage, useWallet } from "@solana/wallet-adapter-react";
+import type { Connector } from "@wagmi/core";
+import { ConnectorButton } from "./evm-connectors";
 
 type SolanaConnectorProps = {
   isConnected: boolean;
   onConnect: () => void;
+  wallet: Wallet | null;
 };
 
-const SolanaConnector = ({ isConnected, onConnect }: SolanaConnectorProps) => {
-  const { wallet } = useWallet();
-  const [walletName] = useLocalStorage<string>("walletName", wallet?.adapter?.name ?? "");
-  const { mode } = useTheme();
+const SolanaConnector = ({ isConnected, onConnect, wallet }: SolanaConnectorProps) => {
+  const [walletName] = useLocalStorage<string>("walletName", wallet?.adapter?.name ?? "Solana");
+  const { disconnect } = useWallet();
+
+  const connector: Partial<Connector> = {
+    name: walletName,
+    uid: "solana",
+    adapter: {
+      name: walletName,
+      connect: () => onConnect(),
+    },
+  };
 
   return (
-    <button
-      type="button"
-      onClick={onConnect}
-      className={twMerge(
-        "btn-primary text-md py-4 flex items-center gap-2 duration-300 transition-all",
-        !isConnected && "hover-input",
-        isConnected && "opacity-50 cursor-not-allowed",
+    <div className="flex gap-2 w-full">
+      <ConnectorButton
+        connector={connector as Connector}
+        isConnected={isConnected}
+        onConnect={onConnect}
+        network="SOL"
+      />
+      {isConnected && (
+        <button type="button" onClick={disconnect} className="mr-2">
+          <Cross1Icon />
+        </button>
       )}
-      disabled={isConnected}
-    >
-      <div className="flex items-center gap-2 font-medium">
-        <Icon connector={{ name: "Solana" }} />
-        <div className="flex items-center gap-1">{walletName ? `${wallet?.adapter.name ?? "Solana"}` : "Solana"}</div>
-      </div>
-      {isConnected && <CheckIcon className="w-6 h-6 ml-auto" />}
-      <span
-        className={twMerge(
-          "bg-primary px-2 py-1 rounded-full text-xs text-text font-bold",
-          isConnected ? "" : "ml-auto",
-          mode === "dark" ? "text-input" : "text-input",
-        )}
-      >
-        SOL
-      </span>
-    </button>
+    </div>
   );
 };
 
