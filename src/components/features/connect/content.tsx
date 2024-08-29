@@ -1,22 +1,37 @@
-import { useCallback, useState, useMemo } from "react";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import React, { useCallback, useState, useMemo } from "react";
 import { useWalletConnections } from "../../../hooks/useWalletConnections";
 import { useAppStore } from "../../../store/useAppStore";
 import EVMConnectors from "./evm-connectors";
+import { search } from "./search";
 import SolanaConnector from "./solana-connector";
 import StartButton from "./start-button";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { search } from "./search";
 
 const ConnectContent = () => {
   const { setCurrentPage } = useAppStore();
-  const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana } = useWalletConnections();
+  const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana, evmConnector, solanaWallet } =
+    useWalletConnections();
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleStartSwapping = useCallback(() => {
     setCurrentPage("swap");
   }, [setCurrentPage]);
 
-  const { showEVMConnectors, showSolanaConnector, anyNetworkFound } = useMemo(() => search(searchTerm), [searchTerm]);
+  const {
+    showEVMConnectors,
+    showSolanaConnector,
+    anyNetworkFound = true,
+  } = useMemo(() => search(searchTerm), [searchTerm]);
+
+  const memoizedEVMConnectors = useMemo(
+    () => <EVMConnectors evmConnector={evmConnector?.name} isConnected={isEVMConnected} onConnect={connectEVM} />,
+    [evmConnector, isEVMConnected, connectEVM],
+  );
+
+  const memoizedSolanaConnector = useMemo(
+    () => <SolanaConnector isConnected={isSolanaConnected} onConnect={connectSolana} wallet={solanaWallet} />,
+    [isSolanaConnected, connectSolana, solanaWallet],
+  );
 
   return (
     <>
@@ -34,8 +49,8 @@ const ConnectContent = () => {
       </div>
       {anyNetworkFound ? (
         <div className="grid grid-cols-1 gap-2 rounded-lg">
-          {showEVMConnectors && <EVMConnectors isConnected={isEVMConnected} onConnect={connectEVM} />}
-          {showSolanaConnector && <SolanaConnector isConnected={isSolanaConnected} onConnect={connectSolana} />}
+          {showEVMConnectors && memoizedEVMConnectors}
+          {showSolanaConnector && memoizedSolanaConnector}
         </div>
       ) : (
         <div className="text-center pb-8 text-muted">No networks found matching your search.</div>
@@ -58,4 +73,4 @@ const Divider = () => (
   </div>
 );
 
-export default ConnectContent;
+export default React.memo(ConnectContent);
