@@ -74,7 +74,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
         <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted" />
       </div>
 
-      <div className="mb-2">
+      <div className="mb-4 px-1">
         <div className="flex justify-between">
           <button
             onClick={() => setIsNetworkSelectorExpanded(!isNetworkSelectorExpanded)}
@@ -119,7 +119,10 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
         )}
       </div>
 
-      <ScrollArea className={twMerge("h-[330px]", isNetworkSelectorExpanded && "h-[259px]")} viewportClassName="h-full">
+      <ScrollArea
+        className={twMerge("px-1 h-[330px]", isNetworkSelectorExpanded && "h-[259px]")}
+        viewportClassName="h-full"
+      >
         <div className="grid grid-cols-1">
           {sortedAssets.map((asset) => {
             const isExcluded =
