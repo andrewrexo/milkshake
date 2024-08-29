@@ -1,4 +1,4 @@
-import { ArchiveIcon, ArrowTopRightIcon, CheckIcon, DoubleArrowDownIcon } from "@radix-ui/react-icons";
+import { ArchiveIcon, ArrowLeftIcon, ArrowTopRightIcon, CheckIcon, DoubleArrowDownIcon } from "@radix-ui/react-icons";
 import { useCallback, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useConnect } from "wagmi";
@@ -83,7 +83,7 @@ const Swap = () => {
     <div className="flex flex-col h-full pb-4 relative">
       <div className="flex items-center justify-between mb-4">
         <button type="button" onClick={() => setCurrentPage("dashboard")} className="text-2xl font-bold">
-          ←
+          <ArrowLeftIcon className="w-6 h-6" />
         </button>
         <h2 className="text-xl font-bold">Transfer</h2>
         <div className="flex space-x-2">
