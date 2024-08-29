@@ -34,7 +34,7 @@ const ConnectContent = () => {
   );
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <div className="mb-4">
         <div className="relative">
           <input
@@ -56,17 +56,19 @@ const ConnectContent = () => {
         <div className="text-center pb-8 text-muted">No networks found matching your search.</div>
       )}
       {anyNetworkFound && <Divider />}
-      <StartButton
-        isEVMConnected={isEVMConnected}
-        isSolanaConnected={isSolanaConnected}
-        onClick={handleStartSwapping}
-      />
-    </>
+      <div className="mt-auto sm:mt-0">
+        <StartButton
+          isEVMConnected={isEVMConnected}
+          isSolanaConnected={isSolanaConnected}
+          onClick={handleStartSwapping}
+        />
+      </div>
+    </div>
   );
 };
 
 const Divider = () => (
-  <div className="mt-4 pb-4 flex items-center">
+  <div className="mt-4 pb-4 flex items-center opacity-0 sm:opacity-100">
     <div className="flex-grow border-t border-muted" />
     <span className="mx-4 text-sm text-muted">or</span>
     <div className="flex-grow border-t border-muted" />
