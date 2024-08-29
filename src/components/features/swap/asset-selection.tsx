@@ -107,7 +107,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
       </div>
 
       <div className="mb-4 px-1">
-        <div className="flex justify-between">
+        <div className="flex justify-between sm:pb-2 pb-0">
           <button
             onClick={() => setIsNetworkSelectorExpanded(!isNetworkSelectorExpanded)}
             className="flex items-center space-x-1 text-sm text-muted hover:text-text transition-colors duration-200"
