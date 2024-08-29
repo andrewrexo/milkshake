@@ -50,8 +50,8 @@
   }
 
   .hover-input {
-    @apply rounded-lg hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-300 ease-in-out;
-    @apply hover:bg-hover;
+    @apply rounded-lg  active:-translate-y-0.5 hover:-translate-y-0.5 hover:scale-[1.02] active:scale-[1.02] transition-all duration-300 ease-in-out;
+    @apply hover:bg-hover active:bg-hover;
   }
 
   .btn-primary {
