@@ -145,7 +145,7 @@ const Swap = () => {
 
         <div className="flex justify-center">
           <button
-            className="p-2 rounded-full bg-surface hover:bg-hover hover:scale-105 transition-transform duration-300 active:scale-90"
+            className="p-2 rounded-full bg-surface hover:bg-hover hover:scale-105 transition-all duration-300 active:scale-90 active:bg-hover"
             type="button"
             onClick={handleReverseTokens}
           >
