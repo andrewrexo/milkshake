@@ -8,6 +8,7 @@ import SafeSVG from "@web3icons/core/svgs/wallets/branded/safe.svg?react";
 import TrustWalletSVG from "@web3icons/core/svgs/wallets/branded/trust.svg?react";
 import WalletConnectSVG from "@web3icons/core/svgs/wallets/branded/wallet-connect.svg?react";
 
+import CubeSVG from "../../assets/cube.svg?react";
 import { CubeIcon } from "@radix-ui/react-icons";
 
 interface WalletIconProps extends React.SVGProps<SVGSVGElement> {
@@ -21,6 +22,7 @@ export const walletIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>
   walletconnect: WalletConnectSVG,
   trustwallet: TrustWalletSVG,
   safe: SafeSVG,
+  injected: CubeSVG,
 };
 
 const WalletIcon: React.FC<WalletIconProps> = ({ iconName, ...props }) => {
