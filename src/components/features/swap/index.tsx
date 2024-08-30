@@ -1,22 +1,20 @@
-import { ArchiveIcon, ArrowLeftIcon, ArrowTopRightIcon, CheckIcon, DoubleArrowDownIcon } from "@radix-ui/react-icons";
+import { ArrowTopRightIcon, CheckIcon, DoubleArrowDownIcon } from "@radix-ui/react-icons";
 import { useCallback, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useConnect } from "wagmi";
 import { useWalletConnections } from "../../../hooks/useWalletConnections";
-import { useAppStore } from "../../../store/useAppStore";
 import { useTheme } from "../../../themes/context";
 import NetworkIcon from "../../icons/network";
 import TokenIcon from "../../icons/token";
 import Bridge from "../bridge";
 import AssetSelection, { type Asset } from "./asset-selection";
+import { useAppStore } from "../../../store/useAppStore";
 
 type TabType = "transfer" | "bridge";
 
 const Swap = () => {
   const { mode } = useTheme();
-  const [activeTab, setActiveTab] = useState<TabType>("transfer");
   const [selectingFor, setSelectingFor] = useState<"from" | "to">("from");
-  const { setCurrentPage } = useAppStore();
   const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana } = useWalletConnections();
   const { connectors } = useConnect();
 
@@ -94,37 +92,9 @@ const Swap = () => {
     [isSolanaConnected, isEVMConnected],
   );
 
-  if (activeTab === "bridge") {
-    return <Bridge onTabChange={() => setActiveTab("transfer")} />;
-  }
-
   return (
-    <div className="flex flex-col h-full pb-4 relative">
-      <div className="flex items-center justify-between mb-4">
-        <button type="button" onClick={() => setCurrentPage("dashboard")} className="text-2xl font-bold">
-          <ArrowLeftIcon className="w-6 h-6" />
-        </button>
-        <div className="flex space-x-2">
-          <button
-            type="button"
-            onClick={() => setActiveTab("transfer")}
-            className={`px-4 py-2 rounded-lg ${
-              activeTab === "transfer" ? "bg-primary text-white" : "bg-surface text-text"
-            }`}
-          >
-            Transfer
-          </button>
-          <button type="button" onClick={() => setActiveTab("bridge")}>
-            Bridge
-          </button>
-        </div>
-        <div className="flex space-x-2">
-          <button type="button" className="p-2 rounded-full hover:bg-input">
-            <ArchiveIcon className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-      <div className="flex flex-col space-y-2 mb-4">
+    <div className="flex flex-col h-full ">
+      <div className="flex flex-col space-y-2 mb-4 h-full">
         <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background/50")}>
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium">From</span>
@@ -139,7 +109,7 @@ const Swap = () => {
                 <button
                   type="button"
                   onClick={() => handleNetworkConnect(fromNetwork?.name)}
-                  className="text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                  className="hover:text-hover active:text-hover transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                 >
                   Connect {fromNetwork?.name}
                 </button>
@@ -209,7 +179,7 @@ const Swap = () => {
                 <button
                   type="button"
                   onClick={() => handleNetworkConnect(toNetwork?.name)}
-                  className="text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                  className="hover:text-hover active:text-hover transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                 >
                   Connect {toNetwork?.name}
                 </button>
@@ -264,7 +234,7 @@ const Swap = () => {
       </div>
       <button
         type="button"
-        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-5 sm:mb-0 mt-auto"
+        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary "
         disabled={!amount || !fromToken || !toToken}
         onClick={() => {
           console.log("Submitting transfer:", { amount, fromToken, toToken });

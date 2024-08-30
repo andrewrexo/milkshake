@@ -6,16 +6,15 @@ import { twMerge } from "tailwind-merge";
 import { useAppStore } from "../store/useAppStore";
 import { solanaEndpoint } from "../wagmi";
 import Connect from "./features/connect";
-import Swap from "./features/swap";
+import Transfers from "./features/transfers";
 
 // Import Solana wallet styles
 import "@solana/wallet-adapter-react-ui/styles.css";
-import Dashboard from "./features/dashboard";
 
 const pages = {
   connect: Connect,
-  dashboard: Dashboard,
-  swap: Swap,
+  dashboard: Connect,
+  swap: Transfers,
 };
 
 const Widget = () => {

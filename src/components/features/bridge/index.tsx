@@ -12,14 +12,9 @@ import TokenIcon from "../../icons/token";
 import AssetSelection, { type Asset } from "../swap/asset-selection";
 import NetworkSelection from "./network-selection";
 
-interface BridgeProps {
-  onTabChange: () => void;
-}
-
-const Bridge: React.FC<BridgeProps> = ({ onTabChange }) => {
+const Bridge = () => {
   const { mode } = useTheme();
   const {
-    setCurrentPage,
     bridgeFromNetwork,
     bridgeToNetwork,
     bridgeFromToken,
@@ -88,27 +83,8 @@ const Bridge: React.FC<BridgeProps> = ({ onTabChange }) => {
   const isPairSelected = bridgeFromToken && bridgeFromNetwork && bridgeToNetwork;
 
   return (
-    <div className="flex flex-col h-full pb-4 relative">
-      <div className="flex items-center justify-between mb-4">
-        <button type="button" onClick={() => setCurrentPage("dashboard")} className="text-2xl font-bold">
-          <ArrowLeftIcon className="w-6 h-6" />
-        </button>
-        <div className="flex space-x-2">
-          <button type="button" onClick={onTabChange} className="px-4 py-2 rounded-lg bg-surface text-text">
-            Transfer
-          </button>
-          <button type="button" className="px-4 py-2 rounded-lg bg-primary text-white">
-            Bridge
-          </button>
-        </div>
-        <div className="flex space-x-2">
-          <button type="button" className="p-2 rounded-full hover:bg-input">
-            <ArchiveIcon className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-      <div className="flex flex-col space-y-2 mb-4">
-        {/* From Network Selection */}
+    <div className="flex flex-col h-full">
+      <div className="flex flex-col space-y-2">
         <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background/50")}>
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium">From</span>
@@ -124,7 +100,7 @@ const Bridge: React.FC<BridgeProps> = ({ onTabChange }) => {
                   <button
                     type="button"
                     onClick={() => handleNetworkConnect(bridgeFromNetwork.name)}
-                    className="text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                    className="hover:text-hover active:text-hover transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                   >
                     Connect {bridgeFromNetwork.name}
                   </button>
@@ -179,7 +155,6 @@ const Bridge: React.FC<BridgeProps> = ({ onTabChange }) => {
           </div>
         </div>
 
-        {/* To Network Selection */}
         <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background/30")}>
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium flex gap-1 items-center">To</span>
@@ -195,7 +170,7 @@ const Bridge: React.FC<BridgeProps> = ({ onTabChange }) => {
                   <button
                     type="button"
                     onClick={() => handleNetworkConnect(bridgeToNetwork.name)}
-                    className="text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                    className="hover:text-hover active:text-hover transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                   >
                     Connect {bridgeToNetwork.name}
                   </button>
