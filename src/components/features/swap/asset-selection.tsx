@@ -30,9 +30,16 @@ interface AssetSelectionProps {
   isVisible: boolean;
   excludeAsset?: Asset;
   selectingFor: "from" | "to";
+  supportedNetworks?: string[]; // New prop for supported networks
 }
 
-const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVisible, excludeAsset }) => {
+const AssetSelection: React.FC<AssetSelectionProps> = ({
+  onClose,
+  onSelect,
+  isVisible,
+  excludeAsset,
+  supportedNetworks,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
   const [isNetworkSelectorExpanded, setIsNetworkSelectorExpanded] = useState(false);
@@ -52,7 +59,8 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
         (selectedNetworks.length === 0 || selectedNetworks.includes(asset.network.id)) &&
         (asset.name.toLowerCase().includes(trimmedSearchTerm) ||
           asset.symbol.toLowerCase().includes(trimmedSearchTerm) ||
-          asset.network.name.toLowerCase().includes(trimmedSearchTerm)),
+          asset.network.name.toLowerCase().includes(trimmedSearchTerm)) &&
+        (!supportedNetworks || supportedNetworks.includes(asset.network.id)), // Filter by supported networks
     );
 
     // Add balance information to filtered assets
@@ -71,7 +79,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
         logo: balanceInfo?.logo,
       };
     });
-  }, [searchTerm, selectedNetworks, allTokenBalances]);
+  }, [searchTerm, selectedNetworks, allTokenBalances, supportedNetworks]);
 
   const sortedAssets = useMemo(() => {
     return filteredAssets.sort((a, b) => {
@@ -92,6 +100,11 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
+
+  // Filter networks based on supportedNetworks prop
+  const displayedNetworks = supportedNetworks
+    ? networks.filter((network) => supportedNetworks.includes(network))
+    : networks;
 
   return (
     <Modal isVisible={isVisible} onClose={onClose} title="Select Asset">
@@ -132,7 +145,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({ onClose, onSelect, isVi
         </div>
         {isNetworkSelectorExpanded && (
           <div className="mt-2 flex flex-wrap gap-2">
-            {networks.map((network) => (
+            {displayedNetworks.map((network) => (
               <button
                 key={network}
                 onClick={() => toggleNetwork(network)}

@@ -1,4 +1,5 @@
 import { type StateCreator, create } from "zustand";
+import type { Asset } from "../components/features/swap/asset-selection";
 
 export type Network = {
   id: string;
@@ -10,6 +11,7 @@ type Token = {
   name: string;
   network: Network;
   symbol: string;
+  decimals?: number;
 };
 
 type SwapState = {
@@ -27,6 +29,19 @@ type SwapState = {
   setToNetwork: (network: Network) => void;
 };
 
+type BridgeState = {
+  bridgeFromNetwork: Network | null;
+  bridgeToNetwork: Network | null;
+  bridgeFromToken: Asset | null;
+  bridgeAmount: string;
+  bridgeSlippage: number;
+  setBridgeFromNetwork: (network: Network | null) => void;
+  setBridgeToNetwork: (network: Network | null) => void;
+  setBridgeFromToken: (token: Asset | null) => void;
+  setBridgeAmount: (amount: string) => void;
+  setBridgeSlippage: (slippage: number) => void;
+};
+
 type AppState = {
   isConnected: boolean;
   currentPage: "connect" | "dashboard" | "swap";
@@ -42,9 +57,8 @@ type AppState = {
 const defaultNetworks: Network[] = [
   { id: "ethereum", name: "Ethereum" },
   { id: "arbitrum", name: "Arbitrum" },
-  { id: "solana", name: "Solana" },
-  { id: "bsc", name: "BSC" },
-  { id: "base", name: "Base" },
+  { id: "optimism", name: "Optimism" },
+  { id: "polygon", name: "Polygon" },
 ];
 
 const defaultTokens: Token[] = [
@@ -57,7 +71,7 @@ const defaultTokens: Token[] = [
   {
     id: "usdc",
     name: "USD Coin",
-    network: defaultNetworks[2],
+    network: defaultNetworks[1],
     symbol: "USDC",
   },
 ];
@@ -77,6 +91,19 @@ export const createSwapSlice: StateCreator<SwapState> = (set): SwapState => ({
   setToNetwork: (network: Network) => set({ toNetwork: network }),
 });
 
+export const createBridgeSlice: StateCreator<BridgeState> = (set): BridgeState => ({
+  bridgeFromNetwork: null,
+  bridgeToNetwork: null,
+  bridgeFromToken: null,
+  bridgeAmount: "",
+  bridgeSlippage: 0.5,
+  setBridgeFromNetwork: (network) => set({ bridgeFromNetwork: network }),
+  setBridgeToNetwork: (network) => set({ bridgeToNetwork: network }),
+  setBridgeFromToken: (token) => set({ bridgeFromToken: token }),
+  setBridgeAmount: (amount) => set({ bridgeAmount: amount }),
+  setBridgeSlippage: (slippage) => set({ bridgeSlippage: slippage }),
+});
+
 export const createAppSlice: StateCreator<AppState> = (set): AppState => ({
   isConnected: false,
   currentPage: "connect",
@@ -89,7 +116,8 @@ export const createAppSlice: StateCreator<AppState> = (set): AppState => ({
   setShowModal: (show: boolean) => set({ showModal: show }),
 });
 
-export const useAppStore = create<AppState & SwapState>()((...args) => ({
+export const useAppStore = create<AppState & SwapState & BridgeState>()((...args) => ({
   ...createAppSlice(...args),
   ...createSwapSlice(...args),
+  ...createBridgeSlice(...args),
 }));

@@ -6,6 +6,7 @@ import BaseSVG from "@web3icons/core/svgs/networks/branded/base.svg?react";
 import BscSVG from "@web3icons/core/svgs/networks/branded/binance-smart-chain.svg?react";
 // we need to import the svg files directly to prevent all svgs from being bundled with the app
 import EthereumSVG from "@web3icons/core/svgs/networks/branded/ethereum.svg?react";
+import OptimismSVG from "@web3icons/core/svgs/networks/branded/optimism.svg?react";
 import PolygonSVG from "@web3icons/core/svgs/networks/branded/polygon-pos.svg?react";
 import SolanaSVG from "@web3icons/core/svgs/networks/branded/solana.svg?react";
 import CubeSVG from "../../assets/cube.svg?react";
@@ -23,6 +24,7 @@ const networkIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   evm: EthereumSVG,
   bsc: BscSVG,
   polygon: PolygonSVG,
+  optimism: OptimismSVG,
 };
 
 const NetworkIcon: React.FC<NetworkIconProps> = ({ iconName, ...props }) => {
