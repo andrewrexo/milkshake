@@ -92,9 +92,9 @@ export const createSwapSlice: StateCreator<SwapState> = (set): SwapState => ({
 });
 
 export const createBridgeSlice: StateCreator<BridgeState> = (set): BridgeState => ({
-  bridgeFromNetwork: null,
-  bridgeToNetwork: null,
-  bridgeFromToken: null,
+  bridgeFromNetwork: defaultNetworks[0],
+  bridgeToNetwork: defaultNetworks[1],
+  bridgeFromToken: defaultTokens[0],
   bridgeAmount: "",
   bridgeSlippage: 0.5,
   setBridgeFromNetwork: (network) => set({ bridgeFromNetwork: network }),

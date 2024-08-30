@@ -14,6 +14,7 @@ import NetworkSelection from "./network-selection";
 
 const Bridge = () => {
   const { mode } = useTheme();
+
   const {
     bridgeFromNetwork,
     bridgeToNetwork,
@@ -91,11 +92,18 @@ const Bridge = () => {
             <span className="text-sm text-muted font-medium flex gap-1.5 items-center min-h-6">
               {bridgeFromNetwork ? (
                 isEVMConnected ? (
-                  <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1">
+                  <button
+                    type="button"
+                    className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1 hover-input"
+                    onClick={() => {
+                      setSelectingNetwork("from");
+                      setShowNetworkModal(true);
+                    }}
+                  >
                     <NetworkIcon iconName={bridgeFromNetwork.id} className="w-4 h-4" />
                     <p>{bridgeFromNetwork.name}</p>
                     <CheckIcon className="w-4 h-4 text-primary" />
-                  </span>
+                  </button>
                 ) : (
                   <button
                     type="button"
@@ -134,7 +142,7 @@ const Bridge = () => {
             />
             <button
               className={twMerge(
-                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover active:bg-hover transition-colors duration-300",
+                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover-input transition-all duration-300",
                 mode === "dark" && "bg-surface/80 hover:bg-surface active:bg-surface",
               )}
               type="button"
@@ -155,17 +163,24 @@ const Bridge = () => {
           </div>
         </div>
 
-        <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background/30")}>
+        <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background")}>
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium flex gap-1 items-center">To</span>
             <span className="text-sm text-muted font-medium flex gap-1.5 items-center min-h-6">
               {bridgeToNetwork ? (
                 isEVMConnected ? (
-                  <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1">
+                  <button
+                    type="button"
+                    className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1 hover-input"
+                    onClick={() => {
+                      setSelectingNetwork("to");
+                      setShowNetworkModal(true);
+                    }}
+                  >
                     <NetworkIcon iconName={bridgeToNetwork.id} className="w-4 h-4" />
                     <p>{bridgeToNetwork.name}</p>
                     <CheckIcon className="w-4 h-4 text-primary" />
-                  </span>
+                  </button>
                 ) : (
                   <button
                     type="button"
@@ -198,7 +213,7 @@ const Bridge = () => {
               readOnly
             />
             {bridgeFromToken && (
-              <div className={twMerge("bg-surface rounded-lg p-2", mode === "dark" && "bg-surface/80")}>
+              <div className={twMerge("bg-surface rounded-lg p-2 pointer-events-none")}>
                 <span className="bg-surface rounded-full flex items-center gap-2">
                   <TokenIcon iconName={bridgeFromToken.id} />
                   <p>{bridgeFromToken.symbol}</p>
@@ -243,27 +258,34 @@ const Bridge = () => {
           ) : null}
         </div>
       </div>
-      <button
-        type="button"
-        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-4 sm:mb-0 mt-auto"
-        disabled={
-          !isPairSelected || !isNetworkPairSupported || !bridgeAmount || isQuoteLoading || !quoteData || !isEVMConnected
-        }
-        onClick={() => {
-          console.log("Submitting bridge with quote:", quoteData);
-        }}
-      >
-        <p className="font-medium transition-all duration-300 flex gap-2 items-center">
-          {!isEVMConnected
-            ? "Connect wallet"
-            : !isPairSelected
-              ? "Select token and networks"
-              : isQuoteLoading
-                ? "Fetching quote..."
-                : "Create bridge"}
-        </p>
-        <ArrowTopRightIcon className="w-5 h-5 ml-auto" />
-      </button>
+      <div className="pt-6 px-2 mb-4 sm:mb-0 mt-auto">
+        <button
+          type="button"
+          className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary"
+          disabled={
+            !isPairSelected ||
+            !isNetworkPairSupported ||
+            !bridgeAmount ||
+            isQuoteLoading ||
+            !quoteData ||
+            !isEVMConnected
+          }
+          onClick={() => {
+            console.log("Submitting bridge with quote:", quoteData);
+          }}
+        >
+          <p className="font-medium transition-all duration-300 flex gap-2 items-center">
+            {!isEVMConnected
+              ? "Connect wallet"
+              : !isPairSelected
+                ? "Select token and networks"
+                : isQuoteLoading
+                  ? "Fetching quote..."
+                  : "Create bridge"}
+          </p>
+          <ArrowTopRightIcon className="w-5 h-5 ml-auto" />
+        </button>
+      </div>
       <AssetSelection
         isVisible={showAssetModal}
         onClose={() => setShowAssetModal(false)}

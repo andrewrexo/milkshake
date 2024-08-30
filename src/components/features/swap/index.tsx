@@ -97,7 +97,7 @@ const Swap = () => {
             <span className="text-sm font-medium">From</span>
             <span className="text-sm text-muted font-medium flex gap-1.5 items-center min-h-6">
               {isNetworkConnected(fromNetwork?.name) ? (
-                <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1">
+                <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1 pointer-events-none">
                   <NetworkIcon iconName={fromNetwork?.id} className="w-4 h-4" />
                   <p>{fromNetwork?.name}</p>
                   <CheckIcon className="w-4 h-4 text-primary" />
@@ -128,8 +128,8 @@ const Swap = () => {
             />
             <button
               className={twMerge(
-                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover active:bg-hover transition-colors duration-300",
-                mode === "dark" && "bg-surface/80 hover:bg-surface active:bg-surface",
+                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover-input transition-all duration-300",
+                mode === "dark" && "hover:bg-surface active:bg-surface",
               )}
               type="button"
               onClick={() => {
@@ -193,8 +193,8 @@ const Swap = () => {
             />
             <button
               className={twMerge(
-                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover active:bg-hover transition-colors duration-300",
-                mode === "dark" && "bg-surface/80 hover:bg-surface active:bg-surface",
+                "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover active:bg-hover transition-all duration-300 hover-input",
+                mode === "dark" && "hover:bg-surface active:bg-surface",
               )}
               type="button"
               onClick={() => {
@@ -229,17 +229,19 @@ const Swap = () => {
           </div>
         </div>
       </div>
-      <button
-        type="button"
-        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-4 sm:mb-0"
-        disabled={!amount || !fromToken || !toToken}
-        onClick={() => {
-          console.log("Submitting transfer:", { amount, fromToken, toToken });
-        }}
-      >
-        <p className="font-medium transition-all duration-300 flex gap-2 items-center">Create transfer</p>
-        <ArrowTopRightIcon className="w-5 h-5 ml-auto" />
-      </button>
+      <div className="pt-6 px-2 mb-4 sm:mb-0 mt-auto">
+        <button
+          type="button"
+          className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary"
+          disabled={!amount || !fromToken || !toToken}
+          onClick={() => {
+            console.log("Submitting transfer:", { amount, fromToken, toToken });
+          }}
+        >
+          <p className="font-medium transition-all duration-300 flex gap-2 items-center">Create transfer</p>
+          <ArrowTopRightIcon className="w-5 h-5 ml-auto" />
+        </button>
+      </div>
       <AssetSelection
         isVisible={showModal}
         onClose={handleCloseModal}
