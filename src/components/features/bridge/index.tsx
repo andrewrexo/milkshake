@@ -1,4 +1,4 @@
-import { ArchiveIcon, ArrowLeftIcon, ArrowTopRightIcon, CheckIcon } from "@radix-ui/react-icons";
+import { ArrowTopRightIcon, CheckIcon } from "@radix-ui/react-icons";
 import BigNumber from "bignumber.js";
 import { useCallback, useState } from "react";
 import { twMerge } from "tailwind-merge";

@@ -6,11 +6,8 @@ import { useWalletConnections } from "../../../hooks/useWalletConnections";
 import { useTheme } from "../../../themes/context";
 import NetworkIcon from "../../icons/network";
 import TokenIcon from "../../icons/token";
-import Bridge from "../bridge";
 import AssetSelection, { type Asset } from "./asset-selection";
 import { useAppStore } from "../../../store/useAppStore";
-
-type TabType = "transfer" | "bridge";
 
 const Swap = () => {
   const { mode } = useTheme();

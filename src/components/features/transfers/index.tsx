@@ -3,7 +3,6 @@ import { useState, useCallback } from "react";
 import { ArchiveIcon, ArrowLeftIcon } from "@radix-ui/react-icons";
 import { twMerge } from "tailwind-merge";
 import { useAppStore } from "../../../store/useAppStore";
-import { useTheme } from "../../../themes/context";
 import Swap from "../swap";
 import Bridge from "../bridge";
 
@@ -12,7 +11,6 @@ type TabType = "transfer" | "bridge";
 const Transfers: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("transfer");
   const { setCurrentPage } = useAppStore();
-  const { mode } = useTheme();
 
   const handleTabChange = useCallback((tab: TabType) => {
     setActiveTab(tab);
