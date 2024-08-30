@@ -4,7 +4,6 @@ import type React from "react";
 import CoinbaseSVG from "@web3icons/core/svgs/wallets/branded/coinbase.svg?react";
 // we need to import the svg files directly to prevent all svgs from being bundled with the app
 import MetamaskSVG from "@web3icons/core/svgs/wallets/branded/metamask.svg?react";
-import SafeSVG from "@web3icons/core/svgs/wallets/branded/safe.svg?react";
 import TrustWalletSVG from "@web3icons/core/svgs/wallets/branded/trust.svg?react";
 import WalletConnectSVG from "@web3icons/core/svgs/wallets/branded/wallet-connect.svg?react";
 
@@ -21,7 +20,6 @@ export const walletIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>
   coinbaseWalletSDK: CoinbaseSVG,
   walletconnect: WalletConnectSVG,
   trustwallet: TrustWalletSVG,
-  safe: SafeSVG,
   injected: CubeSVG,
 };
 

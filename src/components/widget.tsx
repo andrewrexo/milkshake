@@ -10,10 +10,11 @@ import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 
 // Import Solana wallet styles
 import "@solana/wallet-adapter-react-ui/styles.css";
+import Dashboard from "./features/dashboard";
 
 const pages = {
   connect: Connect,
-  dashboard: Connect,
+  dashboard: Dashboard,
   swap: Swap,
 };
 
@@ -57,7 +58,7 @@ const Widget = () => {
     <ConnectionProvider endpoint={solanaEndpoint}>
       <WalletProvider wallets={wallets} autoConnect onError={(error) => console.log(error)}>
         <WalletModalProvider>
-          <div className="widget flex flex-col overflow-hidden min-h-full sm:min-h-[570px] w-full max-w-[500px]">
+          <div className="widget flex flex-col overflow-hidden min-h-full sm:min-h-[585px] w-full max-w-[500px]">
             <div data-status={transitionStatus} className="h-full flex flex-col justify-between">
               <PageComponent />
             </div>

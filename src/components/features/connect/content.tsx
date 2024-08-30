@@ -6,6 +6,7 @@ import EVMConnectors from "./evm-connectors";
 import { search } from "./search";
 import SolanaConnector from "./solana-connector";
 import StartButton from "./start-button";
+import { twMerge } from "tailwind-merge";
 
 const ConnectContent = () => {
   const { setCurrentPage } = useAppStore();
@@ -52,10 +53,10 @@ const ConnectContent = () => {
           {showSolanaConnector && memoizedSolanaConnector}
         </div>
       ) : (
-        <div className="text-center pb-8 text-muted">No networks found matching your search.</div>
+        <div className="text-center text-muted mt-8">No networks found matching your search.</div>
       )}
       {anyNetworkFound && <Divider />}
-      <div className="mt-auto sm:mt-0 mb-4">
+      <div className={twMerge("mt-auto sm:mt-0 mb-4", !anyNetworkFound && "sm:mt-auto sm:mb-20")}>
         <StartButton
           isEVMConnected={isEVMConnected}
           isSolanaConnected={isSolanaConnected}
