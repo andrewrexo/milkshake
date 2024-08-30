@@ -51,22 +51,24 @@ const Transfers: React.FC = () => {
         </div>
       </div>
 
-      <div
-        className={twMerge(
-          "transition-opacity duration-300 ease-in-out h-full pb-4",
-          activeTab === "transfer" ? "opacity-100" : "opacity-0 absolute inset-0 pointer-events-none",
-        )}
-      >
-        {activeTab === "transfer" && <Swap />}
-      </div>
+      <div className="relative flex-grow overflow-hidden">
+        <div
+          className={twMerge(
+            "transition-all duration-300 ease-in-out h-full pb-4 absolute inset-0",
+            activeTab === "transfer" ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full pointer-events-none",
+          )}
+        >
+          <Swap />
+        </div>
 
-      <div
-        className={twMerge(
-          "transition-opacity duration-300 ease-in-out h-full pb-4",
-          activeTab === "bridge" ? "opacity-100" : "opacity-0 absolute inset-0 pointer-events-none",
-        )}
-      >
-        {activeTab === "bridge" && <Bridge />}
+        <div
+          className={twMerge(
+            "transition-all duration-300 ease-in-out h-full pb-4 absolute inset-0",
+            activeTab === "bridge" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full pointer-events-none",
+          )}
+        >
+          <Bridge />
+        </div>
       </div>
     </div>
   );
