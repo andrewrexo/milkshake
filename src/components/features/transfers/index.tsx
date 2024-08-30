@@ -32,14 +32,14 @@ const Transfers: React.FC = () => {
           <button
             type="button"
             onClick={() => handleTabChange("transfer")}
-            className={`px-4 py-2 font-medium rounded-lg relative z-10 hover:text-hover active:text-hover transition-colors duration-300 flex-1 ${activeTab === "transfer" ? "text-text" : "text-primary"}`}
+            className={`px-4 py-2 font-medium rounded-lg relative z-10 hover:text-text active:text-text transition-colors duration-300 flex-1 ${activeTab === "transfer" ? "text-text" : "text-primary"}`}
           >
             Transfer
           </button>
           <button
             type="button"
             onClick={() => handleTabChange("bridge")}
-            className={`px-4 py-2 rounded-lg font-medium relative z-10 hover:text-hover active:text-hover transition-colors duration-300 flex-1 ${activeTab === "bridge" ? "text-text" : "text-primary"}`}
+            className={`px-4 py-2 rounded-lg font-medium relative z-10 hover:text-text active:text-text transition-colors duration-300 flex-1 ${activeTab === "bridge" ? "text-text" : "text-primary"}`}
           >
             Bridge
           </button>
