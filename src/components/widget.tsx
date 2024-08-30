@@ -57,7 +57,7 @@ const Widget = () => {
     <ConnectionProvider endpoint={solanaEndpoint}>
       <WalletProvider wallets={wallets} autoConnect onError={(error) => console.log(error)}>
         <WalletModalProvider>
-          <div className="widget flex flex-col overflow-hidden h-full sm:min-h-[620px] w-full max-w-[500px]">
+          <div className="widget flex flex-col overflow-hidden h-full sm:h-auto sm:min-h-[600px] w-full max-w-[500px]">
             <div data-status={transitionStatus} className="h-full flex-grow flex flex-col justify-between">
               <PageComponent />
             </div>

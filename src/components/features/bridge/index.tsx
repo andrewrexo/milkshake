@@ -244,12 +244,7 @@ const Bridge = () => {
                   {formatAmount(quoteData.amountOutMin, bridgeFromToken?.decimals ?? 18)} {bridgeFromToken?.symbol}
                 </p>
               </div>
-              <div className="flex justify-between">
-                <p className="text-sm font-medium">Bonder fee</p>
-                <p className="text-sm font-medium text-muted">
-                  {formatAmount(quoteData.bonderFee, bridgeFromToken?.decimals ?? 18)} {bridgeFromToken?.symbol}
-                </p>
-              </div>
+
               <div className="flex justify-between">
                 <p className="text-sm font-medium">Slippage</p>
                 <p className="text-sm font-medium text-muted">{quoteData.slippage}%</p>
