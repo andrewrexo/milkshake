@@ -7,8 +7,8 @@ import MetamaskSVG from "@web3icons/core/svgs/wallets/branded/metamask.svg?react
 import TrustWalletSVG from "@web3icons/core/svgs/wallets/branded/trust.svg?react";
 import WalletConnectSVG from "@web3icons/core/svgs/wallets/branded/wallet-connect.svg?react";
 
-import CubeSVG from "../../assets/cube.svg?react";
 import { CubeIcon } from "@radix-ui/react-icons";
+import CubeSVG from "../../assets/cube.svg?react";
 
 interface WalletIconProps extends React.SVGProps<SVGSVGElement> {
   iconName: string;

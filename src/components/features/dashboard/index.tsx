@@ -61,7 +61,7 @@ const Dashboard = () => {
           <span className="mr-2">
             <LoopIcon className="w-4 h-4" />
           </span>
-          Hop
+          Bridge
         </button>
       </div>
 

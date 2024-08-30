@@ -1,43 +1,56 @@
-import { ArchiveIcon, ArrowLeftIcon, ArrowTopRightIcon, CheckIcon, DoubleArrowDownIcon } from "@radix-ui/react-icons";
+import { ArrowTopRightIcon, CheckIcon, DoubleArrowDownIcon } from "@radix-ui/react-icons";
 import { useCallback, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useConnect } from "wagmi";
 import { useWalletConnections } from "../../../hooks/useWalletConnections";
-import { useAppStore } from "../../../store/useAppStore";
 import { useTheme } from "../../../themes/context";
-import TokenIcon from "../../icons/token";
-import AssetSelection, { type Asset } from "./asset-selection";
 import NetworkIcon from "../../icons/network";
+import TokenIcon from "../../icons/token";
+import Bridge from "../bridge";
+import AssetSelection, { type Asset } from "./asset-selection";
+import { useAppStore } from "../../../store/useAppStore";
+
+type TabType = "transfer" | "bridge";
 
 const Swap = () => {
   const { mode } = useTheme();
   const [selectingFor, setSelectingFor] = useState<"from" | "to">("from");
-  const { setCurrentPage } = useAppStore();
   const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana } = useWalletConnections();
   const { connectors } = useConnect();
 
-  const { toToken, fromToken, setToToken, setFromToken, toNetwork, fromNetwork, setShowModal, showModal } = useAppStore(
-    (state) => ({
-      toToken: state.toToken,
-      fromToken: state.fromToken,
-      setToToken: state.setToToken,
-      setFromToken: state.setFromToken,
-      toNetwork: state.toNetwork,
-      fromNetwork: state.fromNetwork,
-      setShowModal: state.setShowModal,
-      showModal: state.showModal,
-    }),
-  );
+  const {
+    toToken,
+    fromToken,
+    setToToken,
+    setFromToken,
+    toNetwork,
+    fromNetwork,
+    setShowModal,
+    showModal,
+    setFromNetwork,
+    setToNetwork,
+  } = useAppStore((state) => ({
+    toToken: state.toToken,
+    fromToken: state.fromToken,
+    setToToken: state.setToToken,
+    setFromToken: state.setFromToken,
+    toNetwork: state.toNetwork,
+    fromNetwork: state.fromNetwork,
+    setShowModal: state.setShowModal,
+    showModal: state.showModal,
+    setFromNetwork: state.setFromNetwork,
+    setToNetwork: state.setToNetwork,
+  }));
+
+  const [amount, setAmount] = useState("");
 
   const handleSelectAsset = (asset: Asset) => {
     if (selectingFor === "from") {
-      setFromToken({
-        ...asset,
-      });
+      setFromToken(asset);
+      setFromNetwork(asset.network); // Set the network based on the selected asset
     } else {
-      setToToken({
-        ...asset,
-      });
+      setToToken(asset);
+      setToNetwork(asset.network); // Set the network based on the selected asset
     }
     setShowModal(false);
   };
@@ -62,7 +75,6 @@ const Swap = () => {
         if (connector) {
           connectEVM(connector);
         } else {
-          // todo: handle this better
           alert("No EVM compatible wallets installed");
         }
       }
@@ -81,19 +93,8 @@ const Swap = () => {
   );
 
   return (
-    <div className="flex flex-col h-full pb-4 relative">
-      <div className="flex items-center justify-between mb-4">
-        <button type="button" onClick={() => setCurrentPage("dashboard")} className="text-2xl font-bold">
-          <ArrowLeftIcon className="w-6 h-6" />
-        </button>
-        <h2 className="text-xl font-bold">Transfer</h2>
-        <div className="flex space-x-2">
-          <button type="button" className="p-2 rounded-full hover:bg-input">
-            <ArchiveIcon className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-      <div className="flex flex-col space-y-2 mb-4">
+    <div className="flex flex-col h-full ">
+      <div className="flex flex-col space-y-2 mb-4 h-full">
         <div className={twMerge("bg-input rounded-lg p-4", mode === "dark" && "bg-background/50")}>
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium">From</span>
@@ -108,15 +109,26 @@ const Swap = () => {
                 <button
                   type="button"
                   onClick={() => handleNetworkConnect(fromNetwork?.name)}
-                  className="text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                  className="hover:text-hover active:text-hover transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                 >
-                  {fromNetwork?.name}
+                  Connect {fromNetwork?.name}
                 </button>
               )}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <input type="number" placeholder="0" className="text-2xl font-bold bg-transparent outline-none w-1/2" />
+            <input
+              type="text"
+              placeholder="0"
+              className="text-2xl font-bold bg-transparent outline-none w-1/2"
+              value={amount}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "" || /^\d*\.?\d*$/.test(value)) {
+                  setAmount(value);
+                }
+              }}
+            />
             <button
               className={twMerge(
                 "flex items-center space-x-2 bg-surface rounded-lg p-2 hover:bg-hover active:bg-hover transition-colors duration-300",
@@ -167,18 +179,19 @@ const Swap = () => {
                 <button
                   type="button"
                   onClick={() => handleNetworkConnect(toNetwork?.name)}
-                  className="text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                  className="hover:text-hover active:text-hover transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                 >
-                  {toNetwork?.name}
+                  Connect {toNetwork?.name}
                 </button>
               )}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <input
-              type="number"
+              type="text"
               placeholder="0"
               className="text-2xl font-bold bg-transparent outline-none w-1/2"
+              value={""}
               readOnly
             />
             <button
@@ -221,7 +234,11 @@ const Swap = () => {
       </div>
       <button
         type="button"
-        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-5 sm:mb-0 mt-auto sm:mt-4"
+        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary "
+        disabled={!amount || !fromToken || !toToken}
+        onClick={() => {
+          console.log("Submitting transfer:", { amount, fromToken, toToken });
+        }}
       >
         <p className="font-medium transition-all duration-300 flex gap-2 items-center">Create transfer</p>
         <ArrowTopRightIcon className="w-5 h-5 ml-auto" />

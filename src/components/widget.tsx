@@ -1,21 +1,20 @@
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useAppStore } from "../store/useAppStore";
 import { solanaEndpoint } from "../wagmi";
 import Connect from "./features/connect";
-import Swap from "./features/swap";
-import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
+import Transfers from "./features/transfers";
 
 // Import Solana wallet styles
 import "@solana/wallet-adapter-react-ui/styles.css";
-import Dashboard from "./features/dashboard";
 
 const pages = {
   connect: Connect,
-  dashboard: Dashboard,
-  swap: Swap,
+  dashboard: Connect,
+  swap: Transfers,
 };
 
 const Widget = () => {
@@ -58,7 +57,7 @@ const Widget = () => {
     <ConnectionProvider endpoint={solanaEndpoint}>
       <WalletProvider wallets={wallets} autoConnect onError={(error) => console.log(error)}>
         <WalletModalProvider>
-          <div className="widget flex flex-col overflow-hidden min-h-full sm:min-h-[585px] w-full max-w-[500px]">
+          <div className="widget flex flex-col overflow-hidden min-h-full sm:min-h-[620px] w-full max-w-[500px]">
             <div data-status={transitionStatus} className="h-full flex flex-col justify-between">
               <PageComponent />
             </div>

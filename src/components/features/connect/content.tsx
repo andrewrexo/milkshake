@@ -1,12 +1,12 @@
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import React, { useCallback, useState, useMemo } from "react";
+import { twMerge } from "tailwind-merge";
 import { useWalletConnections } from "../../../hooks/useWalletConnections";
 import { useAppStore } from "../../../store/useAppStore";
 import EVMConnectors from "./evm-connectors";
 import { search } from "./search";
 import SolanaConnector from "./solana-connector";
 import StartButton from "./start-button";
-import { twMerge } from "tailwind-merge";
 
 const ConnectContent = () => {
   const { setCurrentPage } = useAppStore();
