@@ -231,7 +231,7 @@ const Swap = () => {
       </div>
       <button
         type="button"
-        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-4"
+        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-4 sm:mb-0"
         disabled={!amount || !fromToken || !toToken}
         onClick={() => {
           console.log("Submitting transfer:", { amount, fromToken, toToken });

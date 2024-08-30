@@ -51,7 +51,7 @@ const Transfers: React.FC = () => {
         </div>
       </div>
 
-      <div className="relative flex-grow overflow-hidden">
+      <div className="relative flex-grow overflow-hidden h-full">
         <div
           className={twMerge(
             "transition-all duration-300 ease-in-out h-full pb-4 absolute inset-0",
