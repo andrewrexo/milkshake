@@ -22,10 +22,6 @@
 }
 
 @layer base {
-  body, main {
-    @apply bg-background text-text transition-colors;
-  }
-
   a {
     @apply text-primary;
   }
@@ -36,6 +32,26 @@
     -webkit-appearance: none;
     margin: 0;
     -moz-appearance: textfield !important;
+  }
+
+  html, body {
+    @apply h-full overflow-hidden;
+  }
+
+  body {
+    @apply bg-background text-text transition-colors;
+  }
+
+  #root {
+    @apply h-full flex flex-col;
+  }
+
+  main {
+    @apply flex-grow flex flex-col overflow-auto;
+  }
+
+  .widget {
+    @apply flex-shrink-0;
   }
 }
 
