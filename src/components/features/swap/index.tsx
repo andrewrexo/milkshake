@@ -106,7 +106,7 @@ const Swap = () => {
                 <button
                   type="button"
                   onClick={() => handleNetworkConnect(fromNetwork?.name)}
-                  className="hover:text-hover active:text-hover transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                  className="hover:text-text active:text-text transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                 >
                   Connect {fromNetwork?.name}
                 </button>
@@ -176,7 +176,7 @@ const Swap = () => {
                 <button
                   type="button"
                   onClick={() => handleNetworkConnect(toNetwork?.name)}
-                  className="hover:text-hover active:text-hover transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                  className="hover:text-text active:text-text transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                 >
                   Connect {toNetwork?.name}
                 </button>
@@ -231,7 +231,7 @@ const Swap = () => {
       </div>
       <button
         type="button"
-        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary "
+        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-4"
         disabled={!amount || !fromToken || !toToken}
         onClick={() => {
           console.log("Submitting transfer:", { amount, fromToken, toToken });

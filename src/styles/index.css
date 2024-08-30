@@ -55,7 +55,7 @@
   }
 
   .btn-primary {
-    @apply bg-surface text-text hover:bg-input px-4 py-2 border border-border rounded-lg;
+    @apply bg-surface text-text hover:bg-input px-4 py-2 border border-border rounded-lg cursor-pointer;
   }
 
   .btn-secondary {

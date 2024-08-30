@@ -100,7 +100,7 @@ const Bridge = () => {
                   <button
                     type="button"
                     onClick={() => handleNetworkConnect(bridgeFromNetwork.name)}
-                    className="hover:text-hover active:text-hover transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                    className="hover:text-text active:text-text transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                   >
                     Connect {bridgeFromNetwork.name}
                   </button>
@@ -112,7 +112,7 @@ const Bridge = () => {
                     setSelectingNetwork("from");
                     setShowNetworkModal(true);
                   }}
-                  className="text-primary"
+                  className="text-primary hover:text-text active:text-text transition-colors duration-200 underline decoration-1 decoration-wavy underline-offset-4"
                 >
                   Select network
                 </button>
@@ -170,7 +170,7 @@ const Bridge = () => {
                   <button
                     type="button"
                     onClick={() => handleNetworkConnect(bridgeToNetwork.name)}
-                    className="hover:text-hover active:text-hover transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
+                    className="hover:text-text active:text-text transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                   >
                     Connect {bridgeToNetwork.name}
                   </button>
@@ -182,7 +182,7 @@ const Bridge = () => {
                     setSelectingNetwork("to");
                     setShowNetworkModal(true);
                   }}
-                  className="text-primary"
+                  className="text-primary hover:text-text active:text-text transition-colors duration-200 underline decoration-1 decoration-wavy underline-offset-4"
                 >
                   Select network
                 </button>
@@ -245,7 +245,7 @@ const Bridge = () => {
       </div>
       <button
         type="button"
-        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-5 sm:mb-0 mt-auto"
+        className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary mb-4 sm:mb-0 mt-auto"
         disabled={
           !isPairSelected || !isNetworkPairSupported || !bridgeAmount || isQuoteLoading || !quoteData || !isEVMConnected
         }
