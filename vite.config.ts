@@ -21,6 +21,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           "solana-web3": ["@solana/web3.js"],
+          "hop-sdk": ["@hop-protocol/sdk"],
         },
       },
     },
