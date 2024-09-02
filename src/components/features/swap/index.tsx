@@ -106,7 +106,7 @@ const Swap: React.FC<SwapProps> = ({
           </div>
           <div className="flex items-center justify-between">
             <input
-              type="text"
+              type="number"
               placeholder="0"
               className="text-2xl font-bold bg-transparent outline-none w-1/2"
               value={amount}
@@ -185,7 +185,7 @@ const Swap: React.FC<SwapProps> = ({
           </div>
           <div className="flex items-center justify-between">
             <input
-              type="text"
+              type="number"
               placeholder="0"
               className="text-2xl font-bold bg-transparent outline-none w-1/2"
               value={""}

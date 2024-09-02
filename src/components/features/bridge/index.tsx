@@ -1,19 +1,16 @@
-import { Hop, type HopBridge, getChain } from "@hop-protocol/sdk";
+import { useHopBridge } from "../../../hooks/useHopBridge";
 import { ArrowTopRightIcon, CheckIcon } from "@radix-ui/react-icons";
-import BigNumber from "bignumber.js";
 import { debounce } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { parseUnits } from "viem";
-import { useChainId, useConnect, useSwitchChain } from "wagmi";
-import { useEthersSigner } from "../../../hooks/useEthersSigner";
-import { useHopQuote } from "../../../hooks/useHopQuote";
+import { useConnect } from "wagmi";
 import { useWalletConnections } from "../../../hooks/useWalletConnections";
 import { useAppStore } from "../../../store/useAppStore";
 import { useTheme } from "../../../themes/context";
 import NetworkIcon from "../../icons/network";
 import TokenIcon from "../../icons/token";
 import { useToast } from "../../ui/toast";
+import { formatAmount } from "../../../lib/formatter";
 
 interface BridgeProps {
   setShowAssetModal: (show: boolean) => void;
@@ -32,14 +29,11 @@ const Bridge: React.FC<BridgeProps> = ({
   const { bridgeFromNetwork, bridgeToNetwork, bridgeFromToken, bridgeAmount, bridgeSlippage, setBridgeAmount } =
     useAppStore();
 
-  const chainId = useChainId();
-  const signer = useEthersSigner({ chainId });
-  const { switchChainAsync } = useSwitchChain();
-  const { isEVMConnected, connectEVM, evmAddress } = useWalletConnections();
+  const { isEVMConnected, connectEVM } = useWalletConnections();
   const { connectors } = useConnect();
   const { addToast } = useToast();
 
-  const hop = useMemo(() => new Hop("mainnet"), []);
+  const { executeBridge, useHopQuote } = useHopBridge();
 
   const debouncedParams = useMemo(() => {
     return debounce(
@@ -65,10 +59,19 @@ const Bridge: React.FC<BridgeProps> = ({
   const [debouncedQuoteParams, setDebouncedQuoteParams] = useState({
     amount: bridgeAmount,
     symbol: bridgeFromToken?.symbol ?? "",
-    fromNetwork: bridgeFromNetwork?.id ?? "",
-    toNetwork: bridgeToNetwork?.id ?? "",
+    fromNetwork: bridgeFromNetwork?.chainId.toString() ?? "",
+    toNetwork: bridgeToNetwork?.chainId.toString() ?? "",
     slippage: bridgeSlippage,
     decimals: bridgeFromToken?.decimals ?? 18,
+  });
+
+  const { data: quoteData, isLoading: isQuoteLoading } = useHopQuote({
+    amount: debouncedQuoteParams.amount,
+    token: debouncedQuoteParams.symbol,
+    fromChain: debouncedQuoteParams.fromNetwork,
+    toChain: debouncedQuoteParams.toNetwork,
+    slippage: debouncedQuoteParams.slippage,
+    decimals: debouncedQuoteParams.decimals,
   });
 
   useEffect(() => {
@@ -79,8 +82,8 @@ const Bridge: React.FC<BridgeProps> = ({
     debouncedParams({
       amount: bridgeAmount,
       symbol: bridgeFromToken?.symbol ?? "",
-      fromNetwork: bridgeFromNetwork?.id ?? "",
-      toNetwork: bridgeToNetwork?.id ?? "",
+      fromNetwork: bridgeFromNetwork?.chainId.toString() ?? "",
+      toNetwork: bridgeToNetwork?.chainId.toString() ?? "",
       slippage: bridgeSlippage,
       decimals: bridgeFromToken?.decimals ?? 18,
     });
@@ -89,22 +92,6 @@ const Bridge: React.FC<BridgeProps> = ({
       debouncedParams.cancel();
     };
   }, [bridgeAmount, bridgeFromToken, bridgeFromNetwork, bridgeToNetwork, bridgeSlippage, debouncedParams, isSamePair]);
-
-  const { data: quoteData, isLoading: isQuoteLoading } = useHopQuote(
-    debouncedQuoteParams.amount,
-    debouncedQuoteParams.symbol,
-    debouncedQuoteParams.fromNetwork,
-    debouncedQuoteParams.toNetwork,
-    debouncedQuoteParams.slippage,
-    debouncedQuoteParams.decimals,
-    hop,
-  );
-
-  const formatAmount = (value: string, decimals: number) => {
-    const bn = new BigNumber(value);
-    if (bn.isNaN()) return "0";
-    return bn.div(new BigNumber(10).pow(decimals)).toFixed(6);
-  };
 
   const handleNetworkConnect = useCallback(
     (_network: string) => {
@@ -118,67 +105,19 @@ const Bridge: React.FC<BridgeProps> = ({
     [connectEVM, connectors],
   );
 
-  const handleApproval = async (bridge: HopBridge, amount: bigint) => {
-    if (!bridgeFromNetwork) {
-      return false;
-    }
-
-    const approvalAddress = await bridge.getSendApprovalAddress(bridgeFromNetwork.id);
-    const token = bridge.getCanonicalToken(bridgeFromNetwork.id);
-    const allowance = await token.allowance(approvalAddress);
-    const transferAmount = amount.toString();
-
-    if (allowance.lt(transferAmount)) {
-      const tx = await token.approve(approvalAddress, transferAmount);
-      console.log(tx.hash);
-      await tx.wait();
-    }
-  };
-
   const handleBridge = async () => {
-    if (!isEVMConnected || !signer || !quoteData || !bridgeFromToken || !bridgeFromNetwork || !bridgeToNetwork) {
+    if (!bridgeFromToken || !bridgeFromNetwork || !bridgeToNetwork) {
       console.error("Missing required data for bridging");
       addToast("Missing required data for bridging", "error");
       return;
     }
 
-    try {
-      // Check the network and switch if necessary
-      if (chainId !== bridgeFromNetwork.chainId) {
-        await switchChainAsync({
-          chainId: bridgeFromNetwork.chainId,
-        });
-      }
-
-      hop.connect(signer);
-
-      const amountBN = parseUnits(bridgeAmount, bridgeFromToken.decimals ?? 18);
-      const bridge = hop.bridge(bridgeFromToken.symbol);
-
-      if (bridgeFromToken.id.toLowerCase() !== bridgeFromNetwork.nativeTokenSymbol.toLowerCase()) {
-        await handleApproval(bridge, amountBN);
-        console.log("Approval transaction submitted");
-      }
-
-      const tx = await bridge.send(
-        amountBN.toString(),
-        getChain(bridgeFromNetwork.chainId.toString()),
-        bridgeToNetwork.id,
-        {
-          recipient: evmAddress,
-        },
-      );
-
-      console.log("Bridge transaction submitted:", tx.hash);
-      addToast(`Bridge transaction submitted: ${tx.hash}`, "success");
-    } catch (error: unknown) {
-      console.error("Error during bridging:", error);
-      if (typeof error === "object" && error !== null && "details" in error) {
-        addToast(`Error during bridge transaction.\nDetails: ${(error as { details: string }).details}`, "error");
-      } else {
-        addToast("An unexpected error occurred during the bridge transaction.", "error");
-      }
-    }
+    await executeBridge({
+      amount: bridgeAmount,
+      fromToken: bridgeFromToken,
+      fromNetwork: bridgeFromNetwork,
+      toNetwork: bridgeToNetwork,
+    });
   };
 
   return (
@@ -227,7 +166,7 @@ const Bridge: React.FC<BridgeProps> = ({
           </div>
           <div className="flex items-center justify-between">
             <input
-              type="text"
+              type="number"
               placeholder="0"
               className="text-2xl font-bold bg-transparent outline-none w-1/2"
               value={bridgeAmount}
@@ -307,7 +246,7 @@ const Bridge: React.FC<BridgeProps> = ({
           </div>
           <div className="flex items-center justify-between">
             <input
-              type="text"
+              type="number"
               placeholder="0"
               className="text-2xl font-bold bg-transparent outline-none w-1/2"
               value={quoteData ? formatAmount(quoteData.estimatedReceived, bridgeFromToken?.decimals ?? 18) : ""}
