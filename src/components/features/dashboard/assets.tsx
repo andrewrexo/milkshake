@@ -6,7 +6,6 @@ import { config } from "../../../wagmi";
 import NetworkIcon from "../../icons/network";
 import TokenIcon from "../../icons/token";
 
-// Separate component for individual asset
 const AssetItem = React.memo(
   ({
     token,

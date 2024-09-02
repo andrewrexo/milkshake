@@ -1,6 +1,7 @@
+// biome-ignore lint/style/useImportType: <explanation>
+import * as React from "react";
 import { CaretDownIcon, CaretUpIcon, CubeIcon, MagnifyingGlassIcon, ResetIcon } from "@radix-ui/react-icons";
 import { getChainId } from "@wagmi/core";
-import type React from "react";
 import { useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useEVMTokenBalances, useSolanaTokenBalances } from "../../../hooks/useTokenBalances";
@@ -22,7 +23,7 @@ export interface Asset {
   logo?: string;
 }
 
-const networks = ["ethereum", "arbitrum", "polygon", "solana", "bsc"];
+const networks = ["mainnet", "arbitrum", "polygon", "solana", "bsc", "base", "optimism"];
 
 interface AssetSelectionProps {
   onClose: () => void;
@@ -30,7 +31,7 @@ interface AssetSelectionProps {
   isVisible: boolean;
   excludeAsset?: Asset;
   selectingFor: "from" | "to";
-  supportedNetworks?: string[]; // New prop for supported networks
+  supportedNetworks?: Network[];
 }
 
 const AssetSelection: React.FC<AssetSelectionProps> = ({
@@ -56,11 +57,11 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
     const trimmedSearchTerm = searchTerm.trim().toLowerCase();
     const filtered = mockAssets.filter(
       (asset) =>
-        (selectedNetworks.length === 0 || selectedNetworks.includes(asset.network.id)) &&
+        (selectedNetworks.length === 0 || selectedNetworks.includes(asset.network.id.toLowerCase())) &&
         (asset.name.toLowerCase().includes(trimmedSearchTerm) ||
           asset.symbol.toLowerCase().includes(trimmedSearchTerm) ||
           asset.network.name.toLowerCase().includes(trimmedSearchTerm)) &&
-        (!supportedNetworks || supportedNetworks.includes(asset.network.id)), // Filter by supported networks
+        (!supportedNetworks || supportedNetworks.some((network) => network.id === asset.network.id.toLowerCase())),
     );
 
     // Add balance information to filtered assets
@@ -70,7 +71,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
       const balanceInfo = allTokenBalances.find(
         (token) =>
           token.symbol?.toLowerCase() === asset.id.toLowerCase() &&
-          (asset.network.id === "solana" ? !isEvm(token.token) : !isEvm(token.token)),
+          (asset.network.id === "solana" ? !isEvm(token.token) : isEvm(token.token)),
       );
       return {
         ...asset,
@@ -101,9 +102,8 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
     setSearchTerm(e.target.value);
   };
 
-  // Filter networks based on supportedNetworks prop
   const displayedNetworks = supportedNetworks
-    ? networks.filter((network) => supportedNetworks.includes(network))
+    ? networks.filter((network) => supportedNetworks.some((n) => n.id === network))
     : networks;
 
   return (
@@ -192,7 +192,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
                       <CubeIcon className="w-8 h-8" />
                     )}
                     <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-surface flex items-center justify-center">
-                      <NetworkIcon iconName={asset.network.id} className="w-3 h-3" />
+                      <NetworkIcon iconName={asset.network.name.toLowerCase()} className="w-3 h-3" />
                     </div>
                   </div>
                   <div className="text-left">

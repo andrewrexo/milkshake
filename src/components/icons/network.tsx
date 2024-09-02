@@ -17,6 +17,8 @@ interface NetworkIconProps extends React.SVGProps<SVGSVGElement> {
 
 const networkIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   ethereum: EthereumSVG,
+  "arbitrum one": ArbitrumSVG,
+  mainnet: EthereumSVG,
   arbitrum: ArbitrumSVG,
   base: BaseSVG,
   solana: SolanaSVG,
