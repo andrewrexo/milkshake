@@ -13,6 +13,7 @@ import { useAppStore } from "../../../store/useAppStore";
 import { useTheme } from "../../../themes/context";
 import NetworkIcon from "../../icons/network";
 import TokenIcon from "../../icons/token";
+import { useToast } from "../../ui/toast";
 
 interface BridgeProps {
   setShowAssetModal: (show: boolean) => void;
@@ -36,6 +37,7 @@ const Bridge: React.FC<BridgeProps> = ({
   const { switchChainAsync } = useSwitchChain();
   const { isEVMConnected, connectEVM, evmAddress } = useWalletConnections();
   const { connectors } = useConnect();
+  const { addToast } = useToast();
 
   const hop = useMemo(() => new Hop("mainnet"), []);
 
@@ -136,6 +138,7 @@ const Bridge: React.FC<BridgeProps> = ({
   const handleBridge = async () => {
     if (!isEVMConnected || !signer || !quoteData || !bridgeFromToken || !bridgeFromNetwork || !bridgeToNetwork) {
       console.error("Missing required data for bridging");
+      addToast("Missing required data for bridging", "error");
       return;
     }
 
@@ -167,11 +170,14 @@ const Bridge: React.FC<BridgeProps> = ({
       );
 
       console.log("Bridge transaction submitted:", tx.hash);
-
-      // todo: add toast
-    } catch (error) {
+      addToast(`Bridge transaction submitted: ${tx.hash}`, "success");
+    } catch (error: unknown) {
       console.error("Error during bridging:", error);
-      // todo: add toast
+      if (typeof error === "object" && error !== null && "details" in error) {
+        addToast(`Error during bridge transaction.\nDetails: ${(error as { details: string }).details}`, "error");
+      } else {
+        addToast("An unexpected error occurred during the bridge transaction.", "error");
+      }
     }
   };
 
