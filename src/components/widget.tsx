@@ -4,7 +4,7 @@ import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useAppStore } from "../store/useAppStore";
-import { solanaEndpoint } from "../wagmi";
+import { solanaEndpoint } from "../solana";
 import Connect from "./features/connect";
 import Transfers from "./features/transfers";
 import { ToastProvider } from "./ui/toast";
@@ -55,8 +55,8 @@ const Widget = () => {
   const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
   return (
-    <ConnectionProvider endpoint={solanaEndpoint}>
-      <WalletProvider wallets={wallets} autoConnect onError={(error) => console.log(error)}>
+    <WalletProvider wallets={wallets} autoConnect onError={(error) => console.log(error)}>
+      <ConnectionProvider endpoint={solanaEndpoint}>
         <WalletModalProvider>
           <div className="widget flex flex-col overflow-hidden h-full sm:h-auto sm:min-h-[600px] w-full max-w-[500px] relative">
             <ToastProvider>
@@ -74,8 +74,8 @@ const Widget = () => {
             </ToastProvider>
           </div>
         </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
+      </ConnectionProvider>
+    </WalletProvider>
   );
 };
 
