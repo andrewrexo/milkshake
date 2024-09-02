@@ -1,6 +1,6 @@
 import { useHopBridge } from "../../../hooks/useHopBridge";
 import { ArrowTopRightIcon, CheckIcon } from "@radix-ui/react-icons";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useConnect } from "wagmi";
@@ -65,7 +65,11 @@ const Bridge: React.FC<BridgeProps> = ({
     decimals: bridgeFromToken?.decimals ?? 18,
   });
 
-  const { data: quoteData, isLoading: isQuoteLoading } = useHopQuote({
+  const {
+    data: quoteData,
+    isLoading: isQuoteLoading,
+    error: quoteError,
+  } = useHopQuote({
     amount: debouncedQuoteParams.amount,
     token: debouncedQuoteParams.symbol,
     fromChain: debouncedQuoteParams.fromNetwork,
