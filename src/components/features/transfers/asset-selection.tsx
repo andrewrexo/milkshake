@@ -1,9 +1,7 @@
 import { CaretDownIcon, CaretUpIcon, CubeIcon, MagnifyingGlassIcon, ResetIcon } from "@radix-ui/react-icons";
 import { getChainId } from "@wagmi/core";
-// biome-ignore lint/style/useImportType: <explanation>
-import * as React from "react";
+import type * as React from "react";
 import { useMemo, useState } from "react";
-import { twMerge } from "tailwind-merge";
 import { useEVMTokenBalances, useSolanaTokenBalances } from "../../../hooks/useTokenBalances";
 import { mockAssets } from "../../../lib/mock";
 import type { Network } from "../../../store/useAppStore";
