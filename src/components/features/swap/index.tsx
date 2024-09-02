@@ -232,7 +232,10 @@ const Swap: React.FC<SwapProps> = ({
       <div className="pt-6 px-2 mb-4 sm:mb-0 mt-auto">
         <button
           type="button"
-          className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary"
+          className={twMerge(
+            "w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary",
+            "disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100",
+          )}
           disabled={!amount || !fromToken || !toToken}
           onClick={() => {
             console.log("Submitting transfer:", { amount, fromToken, toToken });
