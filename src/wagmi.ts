@@ -1,5 +1,3 @@
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { clusterApiUrl } from "@solana/web3.js";
 import { http, createConfig } from "wagmi";
 import { arbitrum, base, mainnet, optimism, polygon } from "wagmi/chains";
 import { injected, metaMask } from "wagmi/connectors";
@@ -23,9 +21,6 @@ export const config = createConfig({
     [polygon.id]: http(),
   },
 });
-
-export const solanaNetwork = WalletAdapterNetwork.Mainnet;
-export const solanaEndpoint = clusterApiUrl(solanaNetwork);
 
 declare module "wagmi" {
   interface Register {
