@@ -1,8 +1,8 @@
 import { ArrowTopRightIcon, CheckIcon } from "@radix-ui/react-icons";
 import BigNumber from "bignumber.js";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { useConnect } from "wagmi";
+import { useConnect, useSwitchChain, useChainId } from "wagmi";
 import { useHopQuote } from "../../../hooks/useHopQuote";
 import { useWalletConnections } from "../../../hooks/useWalletConnections";
 import { type Network, useAppStore } from "../../../store/useAppStore";
@@ -11,10 +11,14 @@ import NetworkIcon from "../../icons/network";
 import TokenIcon from "../../icons/token";
 import AssetSelection, { type Asset } from "../swap/asset-selection";
 import NetworkSelection from "./network-selection";
+import { debounce } from "lodash";
+import { getChain, Hop, type HopBridge } from "@hop-protocol/sdk";
+import { useEthersSigner } from "../../../hooks/useEthersSigner";
+import { parseUnits } from "viem";
+import { getSupportedNetworks } from "../../../utils/networkUtils";
 
 const Bridge = () => {
   const { mode } = useTheme();
-
   const {
     bridgeFromNetwork,
     bridgeToNetwork,
@@ -27,25 +31,67 @@ const Bridge = () => {
     setBridgeAmount,
   } = useAppStore();
 
+  const chainId = useChainId();
+  const signer = useEthersSigner({ chainId });
+
   const [showAssetModal, setShowAssetModal] = useState(false);
   const [showNetworkModal, setShowNetworkModal] = useState(false);
   const [selectingNetwork, setSelectingNetwork] = useState<"from" | "to">("from");
 
-  const { isEVMConnected, connectEVM } = useWalletConnections();
+  const { switchChainAsync } = useSwitchChain();
+  const { isEVMConnected, connectEVM, evmAddress } = useWalletConnections();
   const { connectors } = useConnect();
 
-  const supportedNetworks = ["ethereum", "arbitrum", "polygon", "optimism"];
+  const hop = useMemo(() => new Hop("mainnet"), []);
 
-  const isNetworkPairSupported =
-    supportedNetworks.includes(bridgeFromNetwork?.id ?? "") && supportedNetworks.includes(bridgeToNetwork?.id ?? "");
+  const debouncedParams = useMemo(() => {
+    return debounce(
+      (params: {
+        amount: string;
+        symbol: string;
+        fromNetwork: string;
+        toNetwork: string;
+        slippage: number;
+        decimals: number;
+      }) => {
+        setDebouncedQuoteParams(params);
+      },
+      400,
+    );
+  }, []);
+
+  const [debouncedQuoteParams, setDebouncedQuoteParams] = useState({
+    amount: bridgeAmount,
+    symbol: bridgeFromToken?.symbol ?? "",
+    fromNetwork: bridgeFromNetwork?.id ?? "",
+    toNetwork: bridgeToNetwork?.id ?? "",
+    slippage: bridgeSlippage,
+    decimals: bridgeFromToken?.decimals ?? 18,
+  });
+
+  useEffect(() => {
+    debouncedParams({
+      amount: bridgeAmount,
+      symbol: bridgeFromToken?.symbol ?? "",
+      fromNetwork: bridgeFromNetwork?.id ?? "",
+      toNetwork: bridgeToNetwork?.id ?? "",
+      slippage: bridgeSlippage,
+      decimals: bridgeFromToken?.decimals ?? 18,
+    });
+
+    return () => {
+      debouncedParams.cancel();
+    };
+  }, [bridgeAmount, bridgeFromToken, bridgeFromNetwork, bridgeToNetwork, bridgeSlippage, debouncedParams]);
 
   const { data: quoteData, isLoading: isQuoteLoading } = useHopQuote(
-    bridgeAmount,
-    bridgeFromToken?.symbol ?? "",
-    bridgeFromNetwork?.id ?? "",
-    bridgeToNetwork?.id ?? "",
-    bridgeSlippage,
-    bridgeFromToken?.decimals ?? 18,
+    debouncedQuoteParams.amount,
+    debouncedQuoteParams.symbol,
+    debouncedQuoteParams.fromNetwork,
+    debouncedQuoteParams.toNetwork,
+    debouncedQuoteParams.slippage,
+    debouncedQuoteParams.decimals,
+    hop,
   );
 
   const formatAmount = (value: string, decimals: number) => {
@@ -81,7 +127,67 @@ const Bridge = () => {
     [connectEVM, connectors],
   );
 
+  const handleApproval = async (bridge: HopBridge, amount: bigint) => {
+    if (!bridgeFromNetwork) {
+      return false;
+    }
+
+    const approvalAddress = await bridge.getSendApprovalAddress(bridgeFromNetwork.id);
+    const token = bridge.getCanonicalToken(bridgeFromNetwork.id);
+    const allowance = await token.allowance(approvalAddress);
+    const transferAmount = amount.toString();
+
+    if (allowance.lt(transferAmount)) {
+      const tx = await token.approve(approvalAddress, transferAmount);
+      console.log(tx.hash);
+      await tx.wait();
+    }
+  };
+
+  const handleBridge = async () => {
+    if (!isEVMConnected || !signer || !quoteData || !bridgeFromToken || !bridgeFromNetwork || !bridgeToNetwork) {
+      console.error("Missing required data for bridging");
+      return;
+    }
+
+    try {
+      // Check the network and switch if necessary
+      if (chainId !== bridgeFromNetwork.chainId) {
+        await switchChainAsync({
+          chainId: bridgeFromNetwork.chainId,
+        });
+      }
+
+      hop.connect(signer);
+
+      const amountBN = parseUnits(bridgeAmount, bridgeFromToken.decimals ?? 18);
+      const bridge = hop.bridge(bridgeFromToken.symbol);
+
+      if (bridgeFromToken.id.toLowerCase() !== bridgeFromNetwork.nativeTokenSymbol.toLowerCase()) {
+        await handleApproval(bridge, amountBN);
+        console.log("Approval transaction submitted");
+      }
+
+      const tx = await bridge.send(
+        amountBN.toString(),
+        getChain(bridgeFromNetwork.chainId.toString()),
+        bridgeToNetwork.id,
+        {
+          recipient: evmAddress,
+        },
+      );
+
+      console.log("Bridge transaction submitted:", tx.hash);
+
+      // todo: add toast
+    } catch (error) {
+      console.error("Error during bridging:", error);
+      // todo: add toast
+    }
+  };
+
   const isPairSelected = bridgeFromToken && bridgeFromNetwork && bridgeToNetwork;
+  const supportedNetworks = getSupportedNetworks();
 
   return (
     <div className="flex flex-col h-full">
@@ -209,7 +315,7 @@ const Bridge = () => {
               type="text"
               placeholder="0"
               className="text-2xl font-bold bg-transparent outline-none w-1/2"
-              value={quoteData ? formatAmount(quoteData.estimatedRecieved, bridgeFromToken?.decimals ?? 18) : ""}
+              value={quoteData ? formatAmount(quoteData.estimatedReceived, bridgeFromToken?.decimals ?? 18) : ""}
               readOnly
             />
             {bridgeFromToken && (
@@ -224,7 +330,7 @@ const Bridge = () => {
         </div>
 
         <div className="flex flex-col gap-2 pt-6">
-          {isPairSelected && isNetworkPairSupported && quoteData ? (
+          {isPairSelected && quoteData ? (
             <>
               <div className="flex justify-between">
                 <p className="text-sm font-medium">Network route</p>
@@ -235,13 +341,13 @@ const Bridge = () => {
               <div className="flex justify-between">
                 <p className="text-sm font-medium">Estimated received</p>
                 <p className="text-sm font-medium text-muted">
-                  {formatAmount(quoteData.estimatedRecieved, bridgeFromToken?.decimals ?? 18)} {bridgeFromToken?.symbol}
+                  {formatAmount(quoteData.amountOut, bridgeFromToken?.decimals ?? 18)} {bridgeFromToken?.symbol}
                 </p>
               </div>
               <div className="flex justify-between">
                 <p className="text-sm font-medium">Minimum received</p>
                 <p className="text-sm font-medium text-muted">
-                  {formatAmount(quoteData.amountOutMin, bridgeFromToken?.decimals ?? 18)} {bridgeFromToken?.symbol}
+                  {formatAmount(quoteData.estimatedReceived, bridgeFromToken?.decimals ?? 18)} {bridgeFromToken?.symbol}
                 </p>
               </div>
 
@@ -257,17 +363,8 @@ const Bridge = () => {
         <button
           type="button"
           className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary"
-          disabled={
-            !isPairSelected ||
-            !isNetworkPairSupported ||
-            !bridgeAmount ||
-            isQuoteLoading ||
-            !quoteData ||
-            !isEVMConnected
-          }
-          onClick={() => {
-            console.log("Submitting bridge with quote:", quoteData);
-          }}
+          disabled={!isPairSelected || !bridgeAmount || isQuoteLoading || !quoteData || !isEVMConnected}
+          onClick={() => handleBridge()}
         >
           <p className="font-medium transition-all duration-300 flex gap-2 items-center">
             {!isEVMConnected
@@ -293,7 +390,7 @@ const Bridge = () => {
         onClose={() => setShowNetworkModal(false)}
         onSelect={handleSelectNetwork}
         excludeNetwork={selectingNetwork === "from" ? bridgeToNetwork ?? undefined : bridgeFromNetwork ?? undefined}
-        supportedNetworks={supportedNetworks.map((id) => ({ id, name: id.charAt(0).toUpperCase() + id.slice(1) }))}
+        supportedNetworks={supportedNetworks}
         selectingFor={selectingNetwork}
       />
     </div>

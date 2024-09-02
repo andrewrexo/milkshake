@@ -1,35 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import BigNumber from "bignumber.js";
+import { useWalletConnections } from "./useWalletConnections";
+import { parseUnits } from "viem";
+import type { Hop } from "@hop-protocol/sdk";
 
-interface HopQuote {
-  amountIn: string;
-  slippage: number;
-  amountOutMin: string;
-  destinationAmountOutMin: string;
-  bonderFee: string;
-  estimatedRecieved: string;
-  deadline: number;
-  destinationDeadline: number;
-}
-
-const supportedNetworks = ["ethereum", "arbitrum", "polygon", "optimism"];
-
-const fetchHopQuote = async (
-  amount: string,
-  token: string,
-  fromChain: string,
-  toChain: string,
-  slippage: number,
-  decimals: number,
-): Promise<HopQuote> => {
-  const adjustedAmount = new BigNumber(amount).times(new BigNumber(10).pow(decimals)).toString(10);
-  const response = await fetch(
-    `https://api.hop.exchange/v1/quote?amount=${adjustedAmount}&token=${token}&fromChain=${fromChain}&toChain=${toChain}&slippage=${slippage}`,
-  );
-  if (!response.ok) {
-    throw new Error("Failed to fetch quote");
+const getChain = (chain: string) => {
+  if (chain === "mainnet") {
+    return "ethereum";
   }
-  return response.json();
+
+  return chain;
 };
 
 export const useHopQuote = (
@@ -39,12 +19,38 @@ export const useHopQuote = (
   toChain: string,
   slippage: number,
   decimals: number,
+  hop: Hop,
 ) => {
-  const isSupported = supportedNetworks.includes(fromChain) && supportedNetworks.includes(toChain);
+  const { isEVMConnected } = useWalletConnections();
 
-  return useQuery<HopQuote, Error>({
+  return useQuery({
     queryKey: ["hopQuote", amount, token, fromChain, toChain, slippage, decimals],
-    queryFn: () => fetchHopQuote(amount, token, fromChain, toChain, slippage, decimals),
-    enabled: !!amount && !!token && !!fromChain && !!toChain && isSupported && !!decimals,
+    queryFn: async () => {
+      if (!isEVMConnected) {
+        throw new Error("EVM wallet not connected");
+      }
+
+      const bridge = hop.bridge(token);
+      const amountBN = parseUnits(amount, decimals);
+      const quote = await bridge.getSendData(amountBN.toString(), getChain(fromChain), getChain(toChain));
+
+      const quoteReturn = {
+        amountIn: BigNumber(quote.amountIn._hex).toString(),
+        amountOut: BigNumber(quote.amountOut._hex).toString(),
+        rate: quote.rate,
+        priceImpact: quote.priceImpact,
+        destinationTxFee: quote.destinationTxFee,
+        adjustedDestinationTxFee: quote.adjustedDestinationTxFee,
+        totalFee: quote.totalFee,
+        estimatedReceived: BigNumber(quote.estimatedReceived._hex).toString(),
+        tokenPriceRate: quote.tokenPriceRate,
+        chainNativeTokenPrice: quote.chainNativeTokenPrice,
+        tokenPrice: quote.tokenPrice,
+        slippage: slippage,
+      };
+
+      return quoteReturn;
+    },
+    enabled: isEVMConnected && !!amount && !!token && !!fromChain && !!toChain && !!decimals,
   });
 };

@@ -1,17 +1,22 @@
 import { type StateCreator, create } from "zustand";
+import { type SupportedNetwork, supportedNetworks } from "../lib/supported-networks";
 import type { Asset } from "../components/features/swap/asset-selection";
+import type { config } from "../wagmi";
 
 export type Network = {
-  id: string;
+  id: SupportedNetwork;
   name: string;
+  nativeTokenSymbol: string;
+  chainId: (typeof config)["chains"][number]["id"];
 };
 
-type Token = {
+export type Token = {
   id: string;
   name: string;
   network: Network;
   symbol: string;
   decimals?: number;
+  isNative?: boolean;
 };
 
 type SwapState = {
@@ -54,12 +59,12 @@ type AppState = {
   setShowModal: (show: boolean) => void;
 };
 
-const defaultNetworks: Network[] = [
-  { id: "ethereum", name: "Ethereum" },
-  { id: "arbitrum", name: "Arbitrum" },
-  { id: "optimism", name: "Optimism" },
-  { id: "polygon", name: "Polygon" },
-];
+export const defaultNetworks: Network[] = Object.entries(supportedNetworks).map(([id, network]) => ({
+  id: id as SupportedNetwork,
+  name: network.name,
+  nativeTokenSymbol: network.nativeCurrency.symbol,
+  chainId: network.id as Network["chainId"],
+}));
 
 const defaultTokens: Token[] = [
   {
@@ -67,12 +72,16 @@ const defaultTokens: Token[] = [
     name: "Ethereum",
     network: defaultNetworks[0],
     symbol: "ETH",
+    decimals: 18,
+    isNative: true,
   },
   {
     id: "usdc",
     name: "USD Coin",
     network: defaultNetworks[1],
     symbol: "USDC",
+    decimals: 6,
+    isNative: false,
   },
 ];
 
@@ -97,9 +106,9 @@ export const createBridgeSlice: StateCreator<BridgeState> = (set): BridgeState =
   bridgeFromToken: defaultTokens[0],
   bridgeAmount: "",
   bridgeSlippage: 0.5,
-  setBridgeFromNetwork: (network) => set({ bridgeFromNetwork: network }),
-  setBridgeToNetwork: (network) => set({ bridgeToNetwork: network }),
-  setBridgeFromToken: (token) => set({ bridgeFromToken: token }),
+  setBridgeFromNetwork: (network: Network | null) => set({ bridgeFromNetwork: network }),
+  setBridgeToNetwork: (network: Network | null) => set({ bridgeToNetwork: network }),
+  setBridgeFromToken: (token: Asset | null) => set({ bridgeFromToken: token }),
   setBridgeAmount: (amount) => set({ bridgeAmount: amount }),
   setBridgeSlippage: (slippage) => set({ bridgeSlippage: slippage }),
 });
