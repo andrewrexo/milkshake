@@ -1,14 +1,15 @@
 import { ArchiveIcon, ArrowLeftIcon } from "@radix-ui/react-icons";
 import type React from "react";
-import { useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useAppStore } from "../../../store/useAppStore";
 import type { Network } from "../../../store/useAppStore";
 import { getSupportedNetworks, getSupportedNetworksAll } from "../../../utils/networkUtils";
-import Bridge from "../bridge";
-import Swap from "../swap";
 import AssetSelection, { type Asset } from "./asset-selection";
 import NetworkSelection from "./network-selection";
+import { LazyBridge } from "../bridge/lazy";
+import { LazySwap } from "../swap/lazy";
+import Spinner from "../../ui/spinner";
 
 type TabType = "transfer" | "bridge";
 
@@ -117,36 +118,39 @@ const Transfers: React.FC = () => {
           </button>
         </div>
       </div>
+      <Suspense fallback={<Spinner />}>
+        <div className="relative flex-grow overflow-hidden h-full">
+          <div
+            className={twMerge(
+              "transition-all duration-300 ease-in-out h-full pb-4 absolute inset-0",
+              activeTab === "transfer"
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-full pointer-events-none",
+            )}
+          >
+            <LazySwap
+              setShowAssetModal={setShowAssetModal}
+              setSelectingFor={setSelectingFor}
+              setShowNetworkModal={setShowNetworkModal}
+              setSelectingNetwork={setSelectingNetwork}
+            />
+          </div>
 
-      <div className="relative flex-grow overflow-hidden h-full">
-        <div
-          className={twMerge(
-            "transition-all duration-300 ease-in-out h-full pb-4 absolute inset-0",
-            activeTab === "transfer" ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full pointer-events-none",
-          )}
-        >
-          <Swap
-            setShowAssetModal={setShowAssetModal}
-            setSelectingFor={setSelectingFor}
-            setShowNetworkModal={setShowNetworkModal}
-            setSelectingNetwork={setSelectingNetwork}
-          />
+          <div
+            className={twMerge(
+              "transition-all duration-300 ease-in-out h-full pb-4 absolute inset-0",
+              activeTab === "bridge" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full pointer-events-none",
+            )}
+          >
+            <LazyBridge
+              setShowAssetModal={setShowAssetModal}
+              setSelectingFor={setSelectingFor}
+              setShowNetworkModal={setShowNetworkModal}
+              setSelectingNetwork={setSelectingNetwork}
+            />
+          </div>
         </div>
-
-        <div
-          className={twMerge(
-            "transition-all duration-300 ease-in-out h-full pb-4 absolute inset-0",
-            activeTab === "bridge" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full pointer-events-none",
-          )}
-        >
-          <Bridge
-            setShowAssetModal={setShowAssetModal}
-            setSelectingFor={setSelectingFor}
-            setShowNetworkModal={setShowNetworkModal}
-            setSelectingNetwork={setSelectingNetwork}
-          />
-        </div>
-      </div>
+      </Suspense>
 
       <AssetSelection
         isVisible={showAssetModal}
