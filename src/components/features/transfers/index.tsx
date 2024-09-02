@@ -1,20 +1,87 @@
-import type React from "react";
-import { useState, useCallback } from "react";
 import { ArchiveIcon, ArrowLeftIcon } from "@radix-ui/react-icons";
+import type React from "react";
+import { useCallback, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useAppStore } from "../../../store/useAppStore";
-import Swap from "../swap";
+import type { Network } from "../../../store/useAppStore";
+import { getSupportedNetworks, getSupportedNetworksAll } from "../../../utils/networkUtils";
 import Bridge from "../bridge";
+import Swap from "../swap";
+import AssetSelection, { type Asset } from "./asset-selection";
+import NetworkSelection from "./network-selection";
 
 type TabType = "transfer" | "bridge";
 
 const Transfers: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("transfer");
   const { setCurrentPage } = useAppStore();
+  const [showAssetModal, setShowAssetModal] = useState(false);
+  const [selectingFor, setSelectingFor] = useState<"from" | "to">("from");
+  const [showNetworkModal, setShowNetworkModal] = useState(false);
+  const [selectingNetwork, setSelectingNetwork] = useState<"from" | "to">("from");
+
+  const {
+    fromNetwork,
+    toNetwork,
+    bridgeFromNetwork,
+    bridgeToNetwork,
+    fromToken,
+    toToken,
+    setFromToken,
+    setToToken,
+    setBridgeFromToken,
+    setBridgeFromNetwork,
+    setBridgeToNetwork,
+  } = useAppStore();
 
   const handleTabChange = useCallback((tab: TabType) => {
     setActiveTab(tab);
   }, []);
+
+  const handleSelectAsset = (asset: Asset) => {
+    const setToken =
+      activeTab === "transfer"
+        ? selectingFor === "from"
+          ? setFromToken
+          : setToToken
+        : selectingFor === "from"
+          ? setBridgeFromToken
+          : setBridgeFromToken;
+
+    setToken(asset);
+    setShowAssetModal(false);
+  };
+
+  const handleSelectNetwork = (network: Network) => {
+    if (activeTab === "transfer") {
+      if (selectingNetwork === "from") {
+        setFromToken({
+          ...fromToken,
+          network,
+        });
+      } else {
+        setToToken({
+          ...toToken,
+          network,
+        });
+      }
+    } else {
+      if (selectingNetwork === "from") {
+        setBridgeFromNetwork(network);
+      } else {
+        setBridgeToNetwork(network);
+      }
+    }
+    setShowNetworkModal(false);
+  };
+
+  const supportedNetworks = useMemo(() => {
+    if (activeTab === "transfer") {
+      return getSupportedNetworksAll();
+    }
+
+    return getSupportedNetworks();
+  }, [activeTab]);
 
   return (
     <div className="flex flex-col h-full">
@@ -58,7 +125,12 @@ const Transfers: React.FC = () => {
             activeTab === "transfer" ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full pointer-events-none",
           )}
         >
-          <Swap />
+          <Swap
+            setShowAssetModal={setShowAssetModal}
+            setSelectingFor={setSelectingFor}
+            setShowNetworkModal={setShowNetworkModal}
+            setSelectingNetwork={setSelectingNetwork}
+          />
         </div>
 
         <div
@@ -67,9 +139,40 @@ const Transfers: React.FC = () => {
             activeTab === "bridge" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full pointer-events-none",
           )}
         >
-          <Bridge />
+          <Bridge
+            setShowAssetModal={setShowAssetModal}
+            setSelectingFor={setSelectingFor}
+            setShowNetworkModal={setShowNetworkModal}
+            setSelectingNetwork={setSelectingNetwork}
+          />
         </div>
       </div>
+
+      <AssetSelection
+        isVisible={showAssetModal}
+        onClose={() => setShowAssetModal(false)}
+        onSelect={handleSelectAsset}
+        selectingFor={selectingFor}
+        supportedNetworks={supportedNetworks as unknown as Network[]}
+        isEvm={activeTab === "bridge"}
+      />
+
+      <NetworkSelection
+        isVisible={showNetworkModal}
+        onClose={() => setShowNetworkModal(false)}
+        onSelect={handleSelectNetwork}
+        excludeNetwork={
+          selectingNetwork === "from"
+            ? activeTab === "transfer"
+              ? fromNetwork
+              : bridgeFromNetwork
+            : activeTab === "transfer"
+              ? toNetwork
+              : bridgeToNetwork
+        }
+        supportedNetworks={supportedNetworks as unknown as Network[]}
+        selectingFor={selectingNetwork}
+      />
     </div>
   );
 };

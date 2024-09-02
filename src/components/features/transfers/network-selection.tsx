@@ -10,7 +10,7 @@ interface NetworkSelectionProps {
   isVisible: boolean;
   onClose: () => void;
   onSelect: (network: Network) => void;
-  excludeNetwork?: Network;
+  excludeNetwork?: Network | null;
   supportedNetworks: Network[];
   selectingFor: "from" | "to";
 }

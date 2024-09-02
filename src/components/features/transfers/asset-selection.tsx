@@ -1,7 +1,7 @@
-// biome-ignore lint/style/useImportType: <explanation>
-import * as React from "react";
 import { CaretDownIcon, CaretUpIcon, CubeIcon, MagnifyingGlassIcon, ResetIcon } from "@radix-ui/react-icons";
 import { getChainId } from "@wagmi/core";
+// biome-ignore lint/style/useImportType: <explanation>
+import * as React from "react";
 import { useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useEVMTokenBalances, useSolanaTokenBalances } from "../../../hooks/useTokenBalances";
@@ -23,7 +23,7 @@ export interface Asset {
   logo?: string;
 }
 
-const networks = ["mainnet", "arbitrum", "polygon", "solana", "bsc", "base", "optimism"];
+const networks = ["solana", "mainnet", "arbitrum", "polygon", "bsc", "base", "optimism"];
 
 interface AssetSelectionProps {
   onClose: () => void;
@@ -32,6 +32,7 @@ interface AssetSelectionProps {
   excludeAsset?: Asset;
   selectingFor: "from" | "to";
   supportedNetworks?: Network[];
+  isEvm?: boolean;
 }
 
 const AssetSelection: React.FC<AssetSelectionProps> = ({
@@ -40,6 +41,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
   isVisible,
   excludeAsset,
   supportedNetworks,
+  isEvm = false,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
@@ -61,7 +63,9 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
         (asset.name.toLowerCase().includes(trimmedSearchTerm) ||
           asset.symbol.toLowerCase().includes(trimmedSearchTerm) ||
           asset.network.name.toLowerCase().includes(trimmedSearchTerm)) &&
-        (!supportedNetworks || supportedNetworks.some((network) => network.id === asset.network.id.toLowerCase())),
+        (!supportedNetworks ||
+          !isEvm ||
+          supportedNetworks.some((network) => network.id === asset.network.id.toLowerCase())),
     );
 
     // Add balance information to filtered assets
@@ -80,7 +84,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
         logo: balanceInfo?.logo,
       };
     });
-  }, [searchTerm, selectedNetworks, allTokenBalances, supportedNetworks]);
+  }, [searchTerm, selectedNetworks, allTokenBalances, supportedNetworks, isEvm]);
 
   const sortedAssets = useMemo(() => {
     return filteredAssets.sort((a, b) => {
@@ -103,7 +107,7 @@ const AssetSelection: React.FC<AssetSelectionProps> = ({
   };
 
   const displayedNetworks = supportedNetworks
-    ? networks.filter((network) => supportedNetworks.some((n) => n.id === network))
+    ? networks.filter((network) => supportedNetworks.some((n) => n.id === network || (network === "solana" && !isEvm)))
     : networks;
 
   return (

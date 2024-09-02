@@ -1,43 +1,38 @@
+import { Hop, type HopBridge, getChain } from "@hop-protocol/sdk";
 import { ArrowTopRightIcon, CheckIcon } from "@radix-ui/react-icons";
 import BigNumber from "bignumber.js";
+import { debounce } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { useConnect, useSwitchChain, useChainId } from "wagmi";
+import { parseUnits } from "viem";
+import { useChainId, useConnect, useSwitchChain } from "wagmi";
+import { useEthersSigner } from "../../../hooks/useEthersSigner";
 import { useHopQuote } from "../../../hooks/useHopQuote";
 import { useWalletConnections } from "../../../hooks/useWalletConnections";
-import { type Network, useAppStore } from "../../../store/useAppStore";
+import { useAppStore } from "../../../store/useAppStore";
 import { useTheme } from "../../../themes/context";
 import NetworkIcon from "../../icons/network";
 import TokenIcon from "../../icons/token";
-import AssetSelection, { type Asset } from "../swap/asset-selection";
-import NetworkSelection from "./network-selection";
-import { debounce } from "lodash";
-import { getChain, Hop, type HopBridge } from "@hop-protocol/sdk";
-import { useEthersSigner } from "../../../hooks/useEthersSigner";
-import { parseUnits } from "viem";
-import { getSupportedNetworks } from "../../../utils/networkUtils";
 
-const Bridge = () => {
+interface BridgeProps {
+  setShowAssetModal: (show: boolean) => void;
+  setSelectingFor: (selectingFor: "from" | "to") => void;
+  setShowNetworkModal: (show: boolean) => void;
+  setSelectingNetwork: (selectingFor: "from" | "to") => void;
+}
+
+const Bridge: React.FC<BridgeProps> = ({
+  setShowAssetModal,
+  setSelectingFor,
+  setShowNetworkModal,
+  setSelectingNetwork,
+}) => {
   const { mode } = useTheme();
-  const {
-    bridgeFromNetwork,
-    bridgeToNetwork,
-    bridgeFromToken,
-    bridgeAmount,
-    bridgeSlippage,
-    setBridgeFromNetwork,
-    setBridgeToNetwork,
-    setBridgeFromToken,
-    setBridgeAmount,
-  } = useAppStore();
+  const { bridgeFromNetwork, bridgeToNetwork, bridgeFromToken, bridgeAmount, bridgeSlippage, setBridgeAmount } =
+    useAppStore();
 
   const chainId = useChainId();
   const signer = useEthersSigner({ chainId });
-
-  const [showAssetModal, setShowAssetModal] = useState(false);
-  const [showNetworkModal, setShowNetworkModal] = useState(false);
-  const [selectingNetwork, setSelectingNetwork] = useState<"from" | "to">("from");
-
   const { switchChainAsync } = useSwitchChain();
   const { isEVMConnected, connectEVM, evmAddress } = useWalletConnections();
   const { connectors } = useConnect();
@@ -60,6 +55,11 @@ const Bridge = () => {
     );
   }, []);
 
+  const isSamePair = useMemo(
+    () => bridgeFromNetwork?.chainId === bridgeToNetwork?.chainId,
+    [bridgeFromNetwork, bridgeToNetwork],
+  );
+
   const [debouncedQuoteParams, setDebouncedQuoteParams] = useState({
     amount: bridgeAmount,
     symbol: bridgeFromToken?.symbol ?? "",
@@ -70,6 +70,10 @@ const Bridge = () => {
   });
 
   useEffect(() => {
+    if (isSamePair) {
+      return;
+    }
+
     debouncedParams({
       amount: bridgeAmount,
       symbol: bridgeFromToken?.symbol ?? "",
@@ -82,7 +86,7 @@ const Bridge = () => {
     return () => {
       debouncedParams.cancel();
     };
-  }, [bridgeAmount, bridgeFromToken, bridgeFromNetwork, bridgeToNetwork, bridgeSlippage, debouncedParams]);
+  }, [bridgeAmount, bridgeFromToken, bridgeFromNetwork, bridgeToNetwork, bridgeSlippage, debouncedParams, isSamePair]);
 
   const { data: quoteData, isLoading: isQuoteLoading } = useHopQuote(
     debouncedQuoteParams.amount,
@@ -98,21 +102,6 @@ const Bridge = () => {
     const bn = new BigNumber(value);
     if (bn.isNaN()) return "0";
     return bn.div(new BigNumber(10).pow(decimals)).toFixed(6);
-  };
-
-  const handleSelectAsset = (asset: Asset) => {
-    setBridgeFromToken(asset);
-    setBridgeFromNetwork(asset.network);
-    setShowAssetModal(false);
-  };
-
-  const handleSelectNetwork = (network: Network) => {
-    if (selectingNetwork === "from") {
-      setBridgeFromNetwork(network);
-    } else {
-      setBridgeToNetwork(network);
-    }
-    setShowNetworkModal(false);
   };
 
   const handleNetworkConnect = useCallback(
@@ -186,9 +175,6 @@ const Bridge = () => {
     }
   };
 
-  const isPairSelected = bridgeFromToken && bridgeFromNetwork && bridgeToNetwork;
-  const supportedNetworks = getSupportedNetworks();
-
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-col space-y-2">
@@ -252,7 +238,10 @@ const Bridge = () => {
                 mode === "dark" && "bg-surface/80 hover:bg-surface active:bg-surface",
               )}
               type="button"
-              onClick={() => setShowAssetModal(true)}
+              onClick={() => {
+                setSelectingFor("from");
+                setShowAssetModal(true);
+              }}
             >
               {bridgeFromToken ? (
                 <>
@@ -330,7 +319,7 @@ const Bridge = () => {
         </div>
 
         <div className="flex flex-col gap-2 pt-6">
-          {isPairSelected && quoteData ? (
+          {quoteData && !isSamePair ? (
             <>
               <div className="flex justify-between">
                 <p className="text-sm font-medium">Network route</p>
@@ -362,37 +351,29 @@ const Bridge = () => {
       <div className="pt-6 px-2 mb-4 sm:mb-0 mt-auto">
         <button
           type="button"
-          className="w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary"
-          disabled={!isPairSelected || !bridgeAmount || isQuoteLoading || !quoteData || !isEVMConnected}
+          className={twMerge(
+            "w-full btn-primary bg-background text-md py-5 px-8 border-none hover-input flex gap-4 items-center rounded-xl text-primary",
+            "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100",
+          )}
+          disabled={!bridgeAmount || isQuoteLoading || !quoteData || !isEVMConnected || isSamePair}
           onClick={() => handleBridge()}
         >
-          <p className="font-medium transition-all duration-300 flex gap-2 items-center">
-            {!isEVMConnected
-              ? "Connect wallet"
-              : !isPairSelected
-                ? "Select token and networks"
-                : isQuoteLoading
-                  ? "Fetching quote..."
-                  : "Create bridge"}
+          <p className="font-medium transition-all duration-300 flex gap-2 items-center w-full">
+            {!isEVMConnected ? (
+              "Connect wallet"
+            ) : isSamePair ? (
+              "Select a network"
+            ) : isQuoteLoading ? (
+              "Fetching quote..."
+            ) : (
+              <span className="flex gap-2 items-center flex-1 w-full">
+                Create bridge
+                <ArrowTopRightIcon className="w-5 h-5 ml-auto" />
+              </span>
+            )}
           </p>
-          <ArrowTopRightIcon className="w-5 h-5 ml-auto" />
         </button>
       </div>
-      <AssetSelection
-        isVisible={showAssetModal}
-        onClose={() => setShowAssetModal(false)}
-        onSelect={handleSelectAsset}
-        selectingFor="from"
-        supportedNetworks={supportedNetworks}
-      />
-      <NetworkSelection
-        isVisible={showNetworkModal}
-        onClose={() => setShowNetworkModal(false)}
-        onSelect={handleSelectNetwork}
-        excludeNetwork={selectingNetwork === "from" ? bridgeToNetwork ?? undefined : bridgeFromNetwork ?? undefined}
-        supportedNetworks={supportedNetworks}
-        selectingFor={selectingNetwork}
-      />
     </div>
   );
 };

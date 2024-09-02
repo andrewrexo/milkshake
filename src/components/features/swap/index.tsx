@@ -3,58 +3,40 @@ import { useCallback, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useConnect } from "wagmi";
 import { useWalletConnections } from "../../../hooks/useWalletConnections";
+import { useAppStore } from "../../../store/useAppStore";
 import { useTheme } from "../../../themes/context";
 import NetworkIcon from "../../icons/network";
 import TokenIcon from "../../icons/token";
-import AssetSelection, { type Asset } from "./asset-selection";
-import { useAppStore } from "../../../store/useAppStore";
 
-const Swap = () => {
+interface SwapProps {
+  setShowAssetModal: (show: boolean) => void;
+  setSelectingFor: (selectingFor: "from" | "to") => void;
+  setShowNetworkModal: (show: boolean) => void;
+  setSelectingNetwork: (selectingFor: "from" | "to") => void;
+}
+
+const Swap: React.FC<SwapProps> = ({
+  setShowAssetModal,
+  setSelectingFor,
+  setShowNetworkModal,
+  setSelectingNetwork,
+}) => {
   const { mode } = useTheme();
-  const [selectingFor, setSelectingFor] = useState<"from" | "to">("from");
   const { isEVMConnected, isSolanaConnected, connectEVM, connectSolana } = useWalletConnections();
   const { connectors } = useConnect();
 
-  const {
-    toToken,
-    fromToken,
-    setToToken,
-    setFromToken,
-    toNetwork,
-    fromNetwork,
-    setShowModal,
-    showModal,
-    setFromNetwork,
-    setToNetwork,
-  } = useAppStore((state) => ({
+  const { toToken, fromToken, setToToken, setFromToken, toNetwork, fromNetwork } = useAppStore((state) => ({
     toToken: state.toToken,
     fromToken: state.fromToken,
     setToToken: state.setToToken,
     setFromToken: state.setFromToken,
     toNetwork: state.toNetwork,
     fromNetwork: state.fromNetwork,
-    setShowModal: state.setShowModal,
-    showModal: state.showModal,
     setFromNetwork: state.setFromNetwork,
     setToNetwork: state.setToNetwork,
   }));
 
   const [amount, setAmount] = useState("");
-
-  const handleSelectAsset = (asset: Asset) => {
-    if (selectingFor === "from") {
-      setFromToken(asset);
-      setFromNetwork(asset.network); // Set the network based on the selected asset
-    } else {
-      setToToken(asset);
-      setToNetwork(asset.network); // Set the network based on the selected asset
-    }
-    setShowModal(false);
-  };
-
-  const handleCloseModal = useCallback(() => {
-    setShowModal(false);
-  }, [setShowModal]);
 
   const handleReverseTokens = useCallback(() => {
     if (fromToken && toToken) {
@@ -97,15 +79,24 @@ const Swap = () => {
             <span className="text-sm font-medium">From</span>
             <span className="text-sm text-muted font-medium flex gap-1.5 items-center min-h-6">
               {isNetworkConnected(fromNetwork?.name) ? (
-                <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1 pointer-events-none">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectingNetwork("from");
+                    setShowNetworkModal(true);
+                  }}
+                  className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1 hover-input"
+                >
                   <NetworkIcon iconName={fromNetwork?.id} className="w-4 h-4" />
                   <p>{fromNetwork?.name}</p>
                   <CheckIcon className="w-4 h-4 text-primary" />
-                </span>
+                </button>
               ) : (
                 <button
                   type="button"
-                  onClick={() => handleNetworkConnect(fromNetwork?.name)}
+                  onClick={() => {
+                    handleNetworkConnect(fromNetwork?.name);
+                  }}
                   className="hover:text-text active:text-text transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                 >
                   Connect {fromNetwork?.name}
@@ -134,7 +125,7 @@ const Swap = () => {
               type="button"
               onClick={() => {
                 setSelectingFor("from");
-                setShowModal(true);
+                setShowAssetModal(true);
               }}
             >
               {fromToken ? (
@@ -167,15 +158,24 @@ const Swap = () => {
             <span className="text-sm font-medium flex gap-1 items-center">To</span>
             <span className="text-sm text-muted font-medium flex gap-1.5 items-center min-h-6">
               {isNetworkConnected(toNetwork?.name) ? (
-                <span className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectingNetwork("to");
+                    setShowNetworkModal(true);
+                  }}
+                  className="bg-surface rounded-full p-0.5 px-2 flex items-center gap-1 hover-input"
+                >
                   <NetworkIcon iconName={toNetwork?.id} className="w-4 h-4" />
                   <p>{toNetwork?.name}</p>
                   <CheckIcon className="w-4 h-4 text-primary" />
-                </span>
+                </button>
               ) : (
                 <button
                   type="button"
-                  onClick={() => handleNetworkConnect(toNetwork?.name)}
+                  onClick={() => {
+                    handleNetworkConnect(toNetwork?.name);
+                  }}
                   className="hover:text-text active:text-text transition-colors duration-200 text-primary underline decoration-1 decoration-wavy underline-offset-4"
                 >
                   Connect {toNetwork?.name}
@@ -199,7 +199,7 @@ const Swap = () => {
               type="button"
               onClick={() => {
                 setSelectingFor("to");
-                setShowModal(true);
+                setShowAssetModal(true);
               }}
             >
               {toToken ? (
@@ -242,13 +242,6 @@ const Swap = () => {
           <ArrowTopRightIcon className="w-5 h-5 ml-auto" />
         </button>
       </div>
-      <AssetSelection
-        isVisible={showModal}
-        onClose={handleCloseModal}
-        onSelect={handleSelectAsset}
-        selectingFor={selectingFor}
-        excludeAsset={selectingFor === "from" ? toToken : fromToken}
-      />
     </div>
   );
 };
