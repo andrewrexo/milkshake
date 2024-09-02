@@ -1,8 +1,8 @@
+import type { Hop } from "@hop-protocol/sdk";
 import { useQuery } from "@tanstack/react-query";
 import BigNumber from "bignumber.js";
-import { useWalletConnections } from "./useWalletConnections";
 import { parseUnits } from "viem";
-import type { Hop } from "@hop-protocol/sdk";
+import { useWalletConnections } from "./useWalletConnections";
 
 const getChain = (chain: string) => {
   if (chain === "mainnet") {

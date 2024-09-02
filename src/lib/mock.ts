@@ -1,5 +1,5 @@
+import type { Asset } from "../components/features/transfers/asset-selection";
 import { defaultNetworks } from "../store/useAppStore";
-import type { Asset } from "../components/features/swap/asset-selection";
 
 export const mockAssets: Asset[] = [
   {

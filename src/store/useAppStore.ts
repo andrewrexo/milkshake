@@ -1,10 +1,10 @@
 import { type StateCreator, create } from "zustand";
+import type { Asset } from "../components/features/transfers/asset-selection";
 import { type SupportedNetwork, supportedNetworks } from "../lib/supported-networks";
-import type { Asset } from "../components/features/swap/asset-selection";
 import type { config } from "../wagmi";
 
 export type Network = {
-  id: SupportedNetwork;
+  id: string;
   name: string;
   nativeTokenSymbol: string;
   chainId: (typeof config)["chains"][number]["id"];
