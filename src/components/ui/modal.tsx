@@ -28,7 +28,7 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, title, children }) =>
 
   return (
     <div
-      className={`absolute h-full inset-0 bg-surface z-10 flex flex-col transition-all duration-500 ${
+      className={`absolute inset-0 bg-surface z-10 flex flex-col transition-all duration-500 ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
       }`}
     >
@@ -38,7 +38,7 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, title, children }) =>
           <Cross2Icon className="w-5 h-5" />
         </button>
       </div>
-      <div className="py-4 h-full">{children}</div>
+      <div className="flex-grow overflow-y-auto pt-4">{children}</div>
     </div>
   );
 };
